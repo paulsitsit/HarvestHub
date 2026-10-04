@@ -26,10 +26,10 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-x-hidden">
       <AnimatedBackground />
 
-      <header className="glass-navbar sticky top-0 z-40">
+      <header className="glass-navbar sticky top-0 z-40 lg:ml-72">
         <div className="mx-auto flex min-h-[72px] max-w-[1600px] items-center justify-between gap-4 px-5 lg:px-8">
           <div className="flex items-center gap-3">
             <button
@@ -79,33 +79,31 @@ const AdminLayout = () => {
         </div>
       </header>
 
-      {mobileOpen && (
-        <div className="fixed inset-0 z-30 lg:hidden">
-          <button
-            type="button"
-            aria-label="Close admin menu"
-            onClick={closeMobileMenu}
-            className="absolute inset-0 h-full w-full cursor-default bg-[var(--green-900)]/35"
-          />
-
-          <div className="absolute left-0 top-[72px] h-[calc(100vh-72px)] w-[min(88vw,20rem)] overflow-y-auto bg-[var(--surface)] p-4 shadow-2xl">
-            <AdminSidebar
-              mobile
-              onNavigate={closeMobileMenu}
+      <div className="lg:hidden">
+        {mobileOpen && (
+          <div className="fixed inset-0 z-50">
+            <button
+              type="button"
+              aria-label="Close admin menu"
+              onClick={closeMobileMenu}
+              className="absolute inset-0 h-full w-full bg-[var(--green-900)]/40"
             />
+
+            <div className="absolute left-0 top-0 h-full w-[min(88vw,20rem)]">
+              <AdminSidebar
+                mobile
+                onNavigate={closeMobileMenu}
+              />
+            </div>
           </div>
-        </div>
-      )}
-
-      <div className="mx-auto flex max-w-[1600px] gap-8 px-5 py-8 lg:px-8">
-        <aside className="hidden lg:block lg:w-64 lg:shrink-0">
-          <AdminSidebar />
-        </aside>
-
-        <main className="min-w-0 flex-1">
-          <Outlet />
-        </main>
+        )}
       </div>
+
+      <main className="min-h-[calc(100vh-72px)] lg:ml-72">
+        <div className="mx-auto max-w-[1600px] px-5 py-8 lg:px-8">
+          <Outlet />
+        </div>
+      </main>
     </div>
   );
 };

@@ -1,21 +1,25 @@
 import {
-  FiBarChart2,
-  FiBox,
   FiCreditCard,
-  FiFileText,
   FiHome,
+  FiLogOut,
   FiMessageSquare,
-  FiPlusCircle,
+  FiPackage,
   FiStar,
   FiUser
 } from 'react-icons/fi';
-import { NavLink } from 'react-router-dom';
+
+import {
+  NavLink,
+  useNavigate
+} from 'react-router-dom';
+
 import useAuth from '../../hooks/useAuth.js';
 
 const FarmerSidebar = () => {
+  const navigate = useNavigate();
+
   const {
     user,
-    farmerProfile,
     logout
   } = useAuth();
 
@@ -26,17 +30,17 @@ const FarmerSidebar = () => {
       icon: FiHome
     },
     {
+      label: 'My profile',
+      path: '/farmer/profile',
+      icon: FiUser
+    },
+    {
       label: 'My products',
       path: '/farmer/products',
-      icon: FiBox
+      icon: FiPackage
     },
     {
-      label: 'Add product',
-      path: '/farmer/products/add',
-      icon: FiPlusCircle
-    },
-    {
-      label: 'Received inquiries',
+      label: 'Inquiries',
       path: '/farmer/inquiries',
       icon: FiMessageSquare
     },
@@ -46,73 +50,86 @@ const FarmerSidebar = () => {
       icon: FiStar
     },
     {
-      label: 'Listing fees',
+      label: 'Payments',
       path: '/farmer/payments',
       icon: FiCreditCard
-    },
-    {
-      label: 'Farm profile',
-      path: '/farmer/profile',
-      icon: FiUser
     }
   ];
 
+  const linkClass = ({ isActive }) => [
+    'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition',
+    isActive
+      ? 'bg-[var(--green-700)] text-white shadow-md'
+      : 'text-[var(--green-800)] hover:bg-[var(--green-100)]'
+  ].join(' ');
+
+  const handleLogout = () => {
+    logout();
+
+    navigate('/login', {
+      replace: true
+    });
+  };
+
   return (
-    <aside className="hidden w-72 shrink-0 lg:block">
-      <div className="glass-panel sticky top-24 rounded-3xl p-4">
-        <div className="border-b border-[var(--green-100)] px-3 pb-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--green-100)] text-xl">
-              🌾
-            </div>
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col overflow-y-auto border-r border-[var(--green-100)] bg-[var(--surface)] shadow-[4px_0_24px_rgba(11,61,46,0.08)] lg:flex">
+      <div className="border-b border-[var(--green-100)] px-5 py-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[var(--green-100)]">
+            <img
+              src="/harvesthub-icon.png"
+              alt="HarvestHub"
+              className="h-full w-full object-contain"
+            />
+          </div>
 
-            <div className="min-w-0">
-              <p className="truncate text-sm font-extrabold text-[var(--green-900)]">
-                {farmerProfile?.farmName || 'My farm'}
-              </p>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-extrabold text-[var(--green-900)]">
+              {user?.farmName ||
+                user?.name ||
+                'Farmer account'}
+            </p>
 
-              <p className="truncate text-xs text-[var(--muted)]">
-                {user?.email}
-              </p>
-            </div>
+            <p className="truncate text-xs text-[var(--muted)]">
+              {user?.email || 'Farmer'}
+            </p>
           </div>
         </div>
+      </div>
 
-        <nav
-          className="mt-4 space-y-1"
-          aria-label="Farmer navigation"
+      <nav
+        className="flex-1 space-y-2 px-4 py-5"
+        aria-label="Farmer navigation"
+      >
+        <p className="px-4 pb-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--muted)]">
+          Workspace
+        </p>
+
+        {links.map((link) => {
+          const Icon = link.icon;
+
+          return (
+            <NavLink
+              key={link.path}
+              to={link.path}
+              className={linkClass}
+            >
+              <Icon size={19} />
+              <span>{link.label}</span>
+            </NavLink>
+          );
+        })}
+      </nav>
+
+      <div className="border-t border-[var(--green-100)] p-4">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-red-700 transition hover:bg-red-50"
         >
-          {links.map((link) => {
-            const Icon = link.icon;
-
-            return (
-              <NavLink
-                key={link.path}
-                to={link.path}
-                className={({ isActive }) => [
-                  'flex min-h-[46px] items-center gap-3 rounded-xl px-3 text-sm font-bold transition',
-                  isActive
-                    ? 'bg-[var(--green-700)] text-white shadow-lg'
-                    : 'text-[var(--muted)] hover:bg-[var(--green-100)] hover:text-[var(--green-900)]'
-                ].join(' ')}
-              >
-                <Icon size={19} />
-                {link.label}
-              </NavLink>
-            );
-          })}
-        </nav>
-
-        <div className="mt-5 border-t border-[var(--green-100)] pt-4">
-          <button
-            type="button"
-            onClick={logout}
-            className="flex min-h-[44px] w-full items-center gap-3 rounded-xl px-3 text-sm font-bold text-red-700 transition hover:bg-red-50"
-          >
-            <FiFileText size={19} />
-            Log out
-          </button>
-        </div>
+          <FiLogOut size={19} />
+          Log out
+        </button>
       </div>
     </aside>
   );

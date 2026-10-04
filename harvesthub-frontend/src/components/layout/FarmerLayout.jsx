@@ -14,10 +14,10 @@ import AnimatedBackground from './AnimatedBackground.jsx';
 
 const FarmerLayout = () => {
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-x-hidden">
       <AnimatedBackground />
 
-      <header className="glass-navbar sticky top-0 z-30">
+      <header className="glass-navbar sticky top-0 z-30 lg:ml-72">
         <div className="mx-auto flex min-h-[72px] max-w-[1600px] items-center justify-between gap-4 px-5 lg:px-8">
           <Link
             to="/"
@@ -43,14 +43,13 @@ const FarmerLayout = () => {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-[1600px] gap-8 px-5 py-8 pb-28 lg:px-8 lg:pb-8">
-        <FarmerSidebar />
-
-        <main className="min-w-0 flex-1">
+      <main className="min-h-[calc(100vh-72px)] lg:ml-72">
+        <div className="mx-auto max-w-[1600px] px-5 py-8 pb-28 lg:px-8 lg:pb-8">
           <Outlet />
-        </main>
-      </div>
+        </div>
+      </main>
 
+      <FarmerSidebar />
       <FarmerBottomNav />
     </div>
   );
