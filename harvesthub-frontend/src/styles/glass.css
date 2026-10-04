@@ -1,0 +1,195 @@
+.glass-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-light);
+  box-shadow:
+    0 24px 60px rgba(11, 61, 46, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    inset 0 -1px 0 rgba(11, 61, 46, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-panel::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.95),
+    transparent
+  );
+  content: '';
+  pointer-events: none;
+}
+
+.glass-panel-dark {
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--glass-dark);
+  box-shadow:
+    0 24px 60px rgba(11, 61, 46, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.glass-navbar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.52);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: 0 10px 36px rgba(11, 61, 46, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid rgba(20, 117, 63, 0.2);
+  border-radius: 0.85rem;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.74);
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.glass-input::placeholder {
+  color: #74877c;
+}
+
+.glass-input:hover {
+  border-color: rgba(20, 117, 63, 0.42);
+}
+
+.glass-input:focus {
+  border-color: var(--green-500);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(47, 165, 90, 0.14);
+}
+
+.glass-select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--green-700) 50%),
+    linear-gradient(135deg, var(--green-700) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 20px,
+    calc(100% - 12px) 20px;
+  background-repeat: no-repeat;
+  background-size:
+    6px 6px,
+    6px 6px;
+  padding-right: 2.5rem;
+}
+
+.gold-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(184, 134, 11, 0.28);
+  border-radius: 0.85rem;
+  padding: 0.72rem 1.1rem;
+  color: var(--green-900);
+  background: linear-gradient(
+    135deg,
+    var(--gold-300),
+    var(--gold-500)
+  );
+  box-shadow:
+    0 10px 22px rgba(184, 134, 11, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  font-weight: 700;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    filter 160ms ease;
+}
+
+.gold-button:hover {
+  filter: brightness(1.04);
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 28px rgba(184, 134, 11, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.76);
+}
+
+.gold-button:active {
+  transform: translateY(0);
+}
+
+.green-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid var(--green-700);
+  border-radius: 0.85rem;
+  padding: 0.72rem 1.1rem;
+  color: var(--green-700);
+  background: rgba(255, 255, 255, 0.44);
+  font-weight: 700;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.green-button:hover {
+  color: var(--white);
+  background: var(--green-700);
+  transform: translateY(-2px);
+}
+
+.status-pill {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: capitalize;
+}
+
+.status-pill-success {
+  color: #0d5a31;
+  background: #d7f3df;
+}
+
+.status-pill-warning {
+  color: #754a00;
+  background: #fff0bd;
+}
+
+.status-pill-danger {
+  color: #8b1e16;
+  background: #ffe0dc;
+}
+
+.status-pill-neutral {
+  color: #3c5146;
+  background: #e4ece6;
+}
+
+@supports not (
+  (backdrop-filter: blur(20px)) or
+  (-webkit-backdrop-filter: blur(20px))
+) {
+  .glass-panel,
+  .glass-navbar {
+    background: #ffffff;
+  }
+
+  .glass-panel-dark {
+    background: var(--green-900);
+  }
+}

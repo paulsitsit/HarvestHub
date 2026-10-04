@@ -1,0 +1,84 @@
+.mesh-orb {
+  position: fixed;
+  z-index: -1;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 999px;
+  opacity: 0.42;
+  filter: blur(70px);
+  pointer-events: none;
+  animation: float-orb 14s ease-in-out infinite;
+}
+
+.mesh-orb-green {
+  top: 8%;
+  left: -6rem;
+  background: var(--green-300);
+}
+
+.mesh-orb-gold {
+  top: 42%;
+  right: -8rem;
+  background: var(--gold-300);
+  animation-delay: -5s;
+}
+
+.mesh-orb-cream {
+  bottom: -10rem;
+  left: 35%;
+  background: #e4f4c7;
+  animation-delay: -9s;
+}
+
+.fade-up {
+  animation: fade-up 500ms ease both;
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: #eaf2ec;
+}
+
+.shimmer::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.64),
+    transparent
+  );
+  content: '';
+  transform: translateX(-100%);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes float-orb {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(2rem, -1.5rem, 0) scale(1.08);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
