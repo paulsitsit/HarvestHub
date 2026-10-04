@@ -1,31 +1,62 @@
-import { useEffect, useState } from 'react';
+import {
+  useEffect,
+  useState
+} from 'react';
+
 import {
   FiBox,
   FiCreditCard,
   FiStar,
   FiUsers
 } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+
+import {
+  Link
+} from 'react-router-dom';
+
 import {
   getAdminDashboard
 } from '../../api/adminApi.js';
-import { getApiErrorMessage } from '../../api/axiosInstance.js';
+
+import {
+  getApiErrorMessage
+} from '../../api/axiosInstance.js';
+
 import Badge from '../../components/common/Badge.jsx';
+import BrandIcon from '../../components/common/BrandIcon.jsx';
 import GlassCard from '../../components/common/GlassCard.jsx';
 import Loader from '../../components/common/Loader.jsx';
+
 import StatCard from '../../components/admin/StatCard.jsx';
+
 import RatingDistributionChart from '../../components/admin/charts/RatingDistributionChart.jsx';
 import RevenueChart from '../../components/admin/charts/RevenueChart.jsx';
 import GrowthChart from '../../components/admin/charts/GrowthChart.jsx';
+
 import useToast from '../../hooks/useToast.js';
-import { formatCurrency } from '../../utils/formatCurrency.js';
-import { formatDate } from '../../utils/formatDate.js';
+
+import {
+  formatCurrency
+} from '../../utils/formatCurrency.js';
+
+import {
+  formatDate
+} from '../../utils/formatDate.js';
 
 const AdminDashboard = () => {
-  const { error } = useToast();
+  const {
+    error
+  } = useToast();
 
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [
+    data,
+    setData
+  ] = useState(null);
+
+  const [
+    loading,
+    setLoading
+  ] = useState(true);
 
   useEffect(() => {
     let active = true;
@@ -36,9 +67,16 @@ const AdminDashboard = () => {
           await getAdminDashboard();
 
         if (active) {
-          setData(response.data);
+          setData(
+            response?.data || {}
+          );
         }
       } catch (requestError) {
+        console.error(
+          'ADMIN DASHBOARD ERROR:',
+          requestError
+        );
+
         if (active) {
           error(
             getApiErrorMessage(
@@ -63,7 +101,9 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <Loader label="Loading admin dashboard..." />
+      <Loader
+        label="Loading admin dashboard..."
+      />
     );
   }
 
@@ -72,20 +112,43 @@ const AdminDashboard = () => {
   const charts = data?.charts || {};
   const queues = data?.queues || {};
 
+  const recentFarmers =
+    Array.isArray(queues.recentFarmers)
+      ? queues.recentFarmers
+      : [];
+
+  const recentProducts =
+    Array.isArray(queues.recentProducts)
+      ? queues.recentProducts
+      : [];
+
+  const recentPayments =
+    Array.isArray(queues.recentPayments)
+      ? queues.recentPayments
+      : [];
+
   return (
     <div className="space-y-8">
-      <div>
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--green-700)]">
-          Administration
-        </p>
+      <div className="flex items-center gap-4">
+        <BrandIcon
+          size="lg"
+          rounded={false}
+          className="rounded-2xl bg-white/70 p-2 shadow-md"
+        />
 
-        <h1 className="mt-2 text-4xl font-extrabold text-[var(--green-900)]">
-          Dashboard
-        </h1>
+        <div>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--green-700)]">
+            Administration
+          </p>
 
-        <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
-          Monitor marketplace activity and review pending actions.
-        </p>
+          <h1 className="mt-2 text-4xl font-extrabold text-[var(--green-900)]">
+            Dashboard
+          </h1>
+
+          <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
+            Monitor marketplace activity and review pending actions.
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -117,7 +180,9 @@ const AdminDashboard = () => {
 
         <StatCard
           label="Verified revenue"
-          value={formatCurrency(revenue.total)}
+          value={formatCurrency(
+            revenue.total || 0
+          )}
           icon={FiCreditCard}
           tone="gold"
         />
@@ -215,8 +280,8 @@ const AdminDashboard = () => {
           </div>
 
           <div className="mt-5 divide-y divide-[var(--green-100)]">
-            {(queues.recentFarmers || []).length ? (
-              queues.recentFarmers.map((farmer) => (
+            {recentFarmers.length ? (
+              recentFarmers.map((farmer) => (
                 <Link
                   key={farmer._id}
                   to={`/admin/farmers/${farmer._id}`}
@@ -224,15 +289,20 @@ const AdminDashboard = () => {
                 >
                   <div>
                     <p className="font-bold text-[var(--green-900)]">
-                      {farmer.farmName}
+                      {farmer.farmName ||
+                        farmer.user?.name ||
+                        'Unnamed farmer'}
                     </p>
 
                     <p className="mt-1 text-xs text-[var(--muted)]">
-                      {farmer.user?.email}
+                      {farmer.user?.email ||
+                        'No email available'}
                     </p>
                   </div>
 
-                  <Badge status={farmer.status} />
+                  <Badge
+                    status={farmer.status}
+                  />
                 </Link>
               ))
             ) : (
@@ -266,23 +336,27 @@ const AdminDashboard = () => {
           </div>
 
           <div className="mt-5 divide-y divide-[var(--green-100)]">
-            {(queues.recentProducts || []).length ? (
-              queues.recentProducts.map((product) => (
+            {recentProducts.length ? (
+              recentProducts.map((product) => (
                 <div
                   key={product._id}
                   className="flex items-center justify-between gap-3 py-4"
                 >
                   <div>
                     <p className="font-bold text-[var(--green-900)]">
-                      {product.name}
+                      {product.name ||
+                        'Unnamed product'}
                     </p>
 
                     <p className="mt-1 text-xs text-[var(--muted)]">
-                      {product.farmer?.farmName || 'Unknown farmer'}
+                      {product.farmer?.farmName ||
+                        'Unknown farmer'}
                     </p>
                   </div>
 
-                  <Badge status={product.status} />
+                  <Badge
+                    status={product.status}
+                  />
                 </div>
               ))
             ) : (
@@ -314,24 +388,33 @@ const AdminDashboard = () => {
           </div>
 
           <div className="mt-5 divide-y divide-[var(--green-100)]">
-            {(queues.recentPayments || []).length ? (
-              queues.recentPayments.map((payment) => (
+            {recentPayments.length ? (
+              recentPayments.map((payment) => (
                 <div
                   key={payment._id}
                   className="flex items-center justify-between gap-3 py-4"
                 >
                   <div>
                     <p className="font-bold text-[var(--green-900)]">
-                      {payment.product?.name || 'Listing payment'}
+                      {payment.product?.name ||
+                        'Listing payment'}
                     </p>
 
                     <p className="mt-1 text-xs text-[var(--muted)]">
-                      {payment.farmer?.farmName || 'Unknown farmer'} ·{' '}
-                      {formatDate(payment.createdAt)}
+                      {payment.farmer?.farmName ||
+                        'Unknown farmer'}
+                      {' · '}
+                      {payment.createdAt
+                        ? formatDate(
+                            payment.createdAt
+                          )
+                        : 'No date'}
                     </p>
                   </div>
 
-                  <Badge status={payment.status} />
+                  <Badge
+                    status={payment.status}
+                  />
                 </div>
               ))
             ) : (

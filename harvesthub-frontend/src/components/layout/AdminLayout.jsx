@@ -1,19 +1,25 @@
 import { useState } from 'react';
+
 import {
   FiArrowLeft,
   FiMenu,
   FiX
 } from 'react-icons/fi';
+
 import {
   Link,
   Outlet
 } from 'react-router-dom';
 
+import BrandIcon from '../common/BrandIcon.jsx';
 import AdminSidebar from './AdminSidebar.jsx';
 import AnimatedBackground from './AnimatedBackground.jsx';
 
 const AdminLayout = () => {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [
+    mobileOpen,
+    setMobileOpen
+  ] = useState(false);
 
   const closeMobileMenu = () => {
     setMobileOpen(false);
@@ -28,7 +34,11 @@ const AdminLayout = () => {
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() => setMobileOpen((current) => !current)}
+              onClick={() =>
+                setMobileOpen(
+                  (current) => !current
+                )
+              }
               aria-label={
                 mobileOpen
                   ? 'Close admin menu'
@@ -46,11 +56,15 @@ const AdminLayout = () => {
 
             <Link
               to="/"
-              className="font-[Poppins] text-xl font-extrabold text-[var(--green-900)]"
+              className="flex items-center gap-3"
             >
-              Harvest
-              <span className="text-[var(--gold-600)]">
-                Hub
+              <BrandIcon size="sm" />
+
+              <span className="font-[Poppins] text-xl font-extrabold text-[var(--green-900)]">
+                Harvest
+                <span className="text-[var(--gold-600)]">
+                  Hub
+                </span>
               </span>
             </Link>
           </div>

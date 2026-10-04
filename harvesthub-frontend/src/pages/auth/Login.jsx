@@ -16,9 +16,11 @@ import {
   useNavigate
 } from 'react-router-dom';
 
+import BrandIcon from '../../components/common/BrandIcon.jsx';
 import Button from '../../components/common/Button.jsx';
 import GlassCard from '../../components/common/GlassCard.jsx';
 import Input from '../../components/common/Input.jsx';
+
 import useAuth from '../../hooks/useAuth.js';
 import useToast from '../../hooks/useToast.js';
 
@@ -39,8 +41,10 @@ const Login = () => {
   const { login } = useAuth();
   const { success, error } = useToast();
 
-  const [showPassword, setShowPassword] =
-    useState(false);
+  const [
+    showPassword,
+    setShowPassword
+  ] = useState(false);
 
   const {
     register,
@@ -88,7 +92,11 @@ const Login = () => {
     <div className="mx-auto flex min-h-[75vh] max-w-6xl items-center justify-center px-5 py-12 lg:px-8">
       <div className="grid w-full max-w-5xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
         <section className="hidden rounded-3xl bg-[var(--green-900)] p-10 text-white lg:block">
-          <div className="text-5xl">🌾</div>
+          <BrandIcon
+            size="lg"
+            rounded={false}
+            className="rounded-2xl bg-white/10 p-2"
+          />
 
           <p className="mt-10 text-sm font-bold uppercase tracking-[0.2em] text-[var(--gold-300)]">
             Seller portal
@@ -130,6 +138,23 @@ const Login = () => {
 
         <GlassCard className="rounded-3xl p-7 sm:p-10">
           <div className="mb-8">
+            <div className="mb-6 flex items-center gap-3">
+              <BrandIcon size="md" />
+
+              <div>
+                <p className="font-[Poppins] text-xl font-extrabold text-[var(--green-900)]">
+                  Harvest
+                  <span className="text-[var(--gold-600)]">
+                    Hub
+                  </span>
+                </p>
+
+                <p className="text-xs text-[var(--muted)]">
+                  Farmer marketplace
+                </p>
+              </div>
+            </div>
+
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--green-700)]">
               Account login
             </p>
@@ -157,7 +182,8 @@ const Login = () => {
                 required: 'Email is required',
                 pattern: {
                   value: /^\S+@\S+\.\S+$/,
-                  message: 'Enter a valid email address'
+                  message:
+                    'Enter a valid email address'
                 }
               })}
             />

@@ -1,5 +1,13 @@
-import { Outlet, Link } from 'react-router-dom';
-import { FiArrowLeft } from 'react-icons/fi';
+import {
+  Link,
+  Outlet
+} from 'react-router-dom';
+
+import {
+  FiArrowLeft
+} from 'react-icons/fi';
+
+import BrandIcon from '../common/BrandIcon.jsx';
 import FarmerSidebar from './FarmerSidebar.jsx';
 import FarmerBottomNav from './FarmerBottomNav.jsx';
 import AnimatedBackground from './AnimatedBackground.jsx';
@@ -13,10 +21,15 @@ const FarmerLayout = () => {
         <div className="mx-auto flex min-h-[72px] max-w-[1600px] items-center justify-between gap-4 px-5 lg:px-8">
           <Link
             to="/"
-            className="font-[Poppins] text-xl font-extrabold text-[var(--green-900)]"
+            className="flex items-center gap-3"
           >
-            Harvest<span className="text-[var(--gold-600)]">
-              Hub
+            <BrandIcon size="sm" />
+
+            <span className="font-[Poppins] text-xl font-extrabold text-[var(--green-900)]">
+              Harvest
+              <span className="text-[var(--gold-600)]">
+                Hub
+              </span>
             </span>
           </Link>
 
