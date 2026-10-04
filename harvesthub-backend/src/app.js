@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/authRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import farmerRoutes from './routes/farmerRoutes.js';
 
 import {
   notFound,
@@ -106,6 +107,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/farmer', farmerRoutes);
 
 // Keep these last.
 app.use(notFound);
