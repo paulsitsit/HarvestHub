@@ -1,7 +1,7 @@
 import axiosInstance from './axiosInstance.js';
 
 const unwrapResponse = (response) => {
-  return response.data?.data || response.data;
+  return response?.data?.data || response?.data || {};
 };
 
 export const registerFarmer = async (payload) => {

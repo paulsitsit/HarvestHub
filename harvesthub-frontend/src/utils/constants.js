@@ -1,5 +1,6 @@
 export const API_URL =
-  import.meta.env.VITE_API_URL || '/api';
+  import.meta.env.VITE_API_URL ||
+  'https://harvesthub-fnk1.onrender.com/api';
 
 export const API_ORIGIN = API_URL.replace(
   /\/api\/?$/,
@@ -61,6 +62,7 @@ export const PRODUCT_UNITS = [
 ];
 
 export const LISTING_FEE = 20;
+
 export const LISTING_DAYS = 30;
 
 export const NAV_LINKS = [

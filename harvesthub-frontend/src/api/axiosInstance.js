@@ -5,17 +5,27 @@ const axiosInstance = axios.create({
   baseURL: API_URL,
   timeout: 20000,
   headers: {
-    Accept: 'application/json'
+    Accept: 'application/json',
+    'Content-Type': 'application/json'
   }
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('harvesthub_token');
+    const token = localStorage.getItem(
+      'harvesthub_token'
+    );
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization =
+        `Bearer ${token}`;
     }
+
+    console.log(
+      'API REQUEST:',
+      config.method?.toUpperCase(),
+      `${config.baseURL}${config.url}`
+    );
 
     return config;
   },
@@ -29,11 +39,25 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      const currentPath = window.location.pathname;
+    console.error('API ERROR:', {
+      url: error.config?.url,
+      baseURL: error.config?.baseURL,
+      status: error.response?.status,
+      response: error.response?.data,
+      message: error.message
+    });
 
-      localStorage.removeItem('harvesthub_token');
-      localStorage.removeItem('harvesthub_user');
+    if (error.response?.status === 401) {
+      const currentPath =
+        window.location.pathname;
+
+      localStorage.removeItem(
+        'harvesthub_token'
+      );
+
+      localStorage.removeItem(
+        'harvesthub_user'
+      );
 
       const isAuthPage =
         currentPath === '/login' ||
@@ -42,7 +66,9 @@ axiosInstance.interceptors.response.use(
 
       if (!isAuthPage) {
         window.dispatchEvent(
-          new CustomEvent('harvesthub:unauthorized')
+          new CustomEvent(
+            'harvesthub:unauthorized'
+          )
         );
       }
     }
@@ -56,9 +82,9 @@ export const getApiErrorMessage = (
   fallback = 'Something went wrong'
 ) => {
   return (
-    error.response?.data?.message ||
-    error.response?.data?.errors?.[0]?.msg ||
-    error.message ||
+    error?.response?.data?.message ||
+    error?.response?.data?.errors?.[0]?.msg ||
+    error?.message ||
     fallback
   );
 };
