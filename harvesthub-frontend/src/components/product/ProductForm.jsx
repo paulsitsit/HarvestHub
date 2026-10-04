@@ -1,19 +1,33 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import {
+  useEffect,
+  useState
+} from 'react';
+
+import {
+  useForm
+} from 'react-hook-form';
+
 import {
   FiSave
 } from 'react-icons/fi';
+
 import {
   getCategories
 } from '../../api/publicApi.js';
-import { getApiErrorMessage } from '../../api/axiosInstance.js';
+
+import {
+  getApiErrorMessage
+} from '../../api/axiosInstance.js';
+
 import Button from '../common/Button.jsx';
 import GlassCard from '../common/GlassCard.jsx';
 import ImageUploader from '../common/ImageUploader.jsx';
 import Input from '../common/Input.jsx';
 import Loader from '../common/Loader.jsx';
 import Select from '../common/Select.jsx';
+
 import useToast from '../../hooks/useToast.js';
+
 import {
   PRODUCT_UNITS
 } from '../../utils/constants.js';
@@ -26,11 +40,20 @@ const ProductForm = ({
 }) => {
   const { error } = useToast();
 
-  const [categories, setCategories] =
-    useState([]);
-  const [loadingCategories, setLoadingCategories] =
-    useState(true);
-  const [images, setImages] = useState(existingImages);
+  const [
+    categories,
+    setCategories
+  ] = useState([]);
+
+  const [
+    loadingCategories,
+    setLoadingCategories
+  ] = useState(true);
+
+  const [
+    images,
+    setImages
+  ] = useState(existingImages);
 
   const {
     register,
@@ -42,18 +65,27 @@ const ProductForm = ({
   } = useForm({
     defaultValues: {
       name: initialValues.name || '',
-      category: initialValues.category?._id ||
+
+      category:
+        initialValues.category?._id ||
         initialValues.category ||
         '',
+
       price: initialValues.price || '',
       unit: initialValues.unit || 'kg',
       quantity: initialValues.quantity || '',
+
       availability:
-        initialValues.availability || 'available',
-      harvestDate: initialValues.harvestDate
-        ? initialValues.harvestDate.slice(0, 10)
-        : '',
-      description: initialValues.description || ''
+        initialValues.availability ||
+        'available',
+
+      harvestDate:
+        initialValues.harvestDate
+          ? initialValues.harvestDate.slice(0, 10)
+          : '',
+
+      description:
+        initialValues.description || ''
     }
   });
 
@@ -62,13 +94,43 @@ const ProductForm = ({
 
     const loadCategories = async () => {
       try {
-        const response =
-          await getCategories();
+        setLoadingCategories(true);
+
+        const response = await getCategories();
+
+        console.log(
+          'CATEGORIES API RESPONSE:',
+          response
+        );
+
+        const categoryList = Array.isArray(response)
+          ? response
+          : Array.isArray(response?.data)
+            ? response.data
+            : Array.isArray(
+                response?.data?.categories
+              )
+              ? response.data.categories
+              : Array.isArray(
+                  response?.categories
+                )
+                ? response.categories
+                : [];
+
+        console.log(
+          'CATEGORIES USED BY FORM:',
+          categoryList
+        );
 
         if (active) {
-          setCategories(response.data || []);
+          setCategories(categoryList);
         }
       } catch (requestError) {
+        console.error(
+          'CATEGORIES LOAD ERROR:',
+          requestError
+        );
+
         if (active) {
           error(
             getApiErrorMessage(
@@ -96,7 +158,10 @@ const ProductForm = ({
 
     Object.entries(formData).forEach(
       ([key, value]) => {
-        payload.append(key, value ?? '');
+        payload.append(
+          key,
+          value ?? ''
+        );
       }
     );
 
@@ -110,7 +175,9 @@ const ProductForm = ({
     );
 
     images
-      .filter((image) => image instanceof File)
+      .filter(
+        (image) => image instanceof File
+      )
       .forEach((file) => {
         payload.append('images', file);
       });
@@ -120,7 +187,9 @@ const ProductForm = ({
 
   if (loadingCategories) {
     return (
-      <Loader label="Loading product categories..." />
+      <Loader
+        label="Loading product categories..."
+      />
     );
   }
 
@@ -144,7 +213,8 @@ const ProductForm = ({
               required: 'Product name is required',
               minLength: {
                 value: 2,
-                message: 'Product name must be at least 2 characters'
+                message:
+                  'Product name must be at least 2 characters'
               }
             })}
           />
@@ -157,14 +227,23 @@ const ProductForm = ({
               required: 'Category is required'
             })}
           >
-            <option value="">Select a category</option>
+            <option value="">
+              {categories.length === 0
+                ? 'No categories available'
+                : 'Select a category'}
+            </option>
 
             {categories.map((category) => (
               <option
-                key={category._id}
-                value={category._id}
+                key={category._id || category.id}
+                value={
+                  category._id || category.id
+                }
               >
-                {category.icon} {category.name}
+                {category.icon
+                  ? `${category.icon} `
+                  : ''}
+                {category.name}
               </option>
             ))}
           </Select>
@@ -181,7 +260,8 @@ const ProductForm = ({
               required: 'Price is required',
               min: {
                 value: 0,
-                message: 'Price cannot be negative'
+                message:
+                  'Price cannot be negative'
               }
             })}
           />
@@ -216,7 +296,8 @@ const ProductForm = ({
               required: 'Quantity is required',
               min: {
                 value: 0,
-                message: 'Quantity cannot be negative'
+                message:
+                  'Quantity cannot be negative'
               }
             })}
           />
@@ -228,9 +309,11 @@ const ProductForm = ({
             <option value="available">
               Available
             </option>
+
             <option value="low_stock">
               Low stock
             </option>
+
             <option value="sold_out">
               Sold out
             </option>
@@ -258,12 +341,15 @@ const ProductForm = ({
             placeholder="Describe your produce, quality, pickup details, and availability."
             className={[
               'glass-input mt-2 resize-y px-4 py-3',
-              errors.description ? 'border-red-600' : ''
+              errors.description
+                ? 'border-red-600'
+                : ''
             ].join(' ')}
             {...register('description', {
               maxLength: {
                 value: 3000,
-                message: 'Description cannot exceed 3,000 characters'
+                message:
+                  'Description cannot exceed 3,000 characters'
               }
             })}
           />
@@ -288,11 +374,12 @@ const ProductForm = ({
           multiple
         />
 
-        {!existingImages.length && !images.length && (
-          <p className="mt-3 text-xs text-red-700">
-            Add at least one image before submitting.
-          </p>
-        )}
+        {!existingImages.length &&
+          !images.length && (
+            <p className="mt-3 text-xs text-red-700">
+              Add at least one image before submitting.
+            </p>
+          )}
       </GlassCard>
 
       <div className="flex justify-end">
