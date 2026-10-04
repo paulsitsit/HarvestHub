@@ -5,11 +5,13 @@ import {
   useMemo,
   useState
 } from 'react';
+
 import {
   getMe,
   login as loginRequest,
   registerFarmer
 } from '../api/authApi.js';
+
 import { getApiErrorMessage } from '../api/axiosInstance.js';
 
 export const AuthContext = createContext(null);
@@ -30,15 +32,30 @@ const getStoredUser = () => {
   }
 };
 
+const normalizeAuthData = (data) => {
+  const authData = data?.data || data || {};
+
+  return {
+    token: authData.token || null,
+    user: authData.user || null,
+    farmerProfile: authData.farmerProfile || null
+  };
+};
+
 const persistAuth = (data) => {
-  if (data?.token) {
-    localStorage.setItem(TOKEN_KEY, data.token);
+  const authData = normalizeAuthData(data);
+
+  if (authData.token) {
+    localStorage.setItem(
+      TOKEN_KEY,
+      authData.token
+    );
   }
 
-  if (data?.user) {
+  if (authData.user) {
     localStorage.setItem(
       USER_KEY,
-      JSON.stringify(data.user)
+      JSON.stringify(authData.user)
     );
   }
 };
@@ -50,13 +67,13 @@ const clearAuthStorage = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(getStoredUser);
-  const [farmerProfile, setFarmerProfile] =
-    useState(null);
+  const [farmerProfile, setFarmerProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState('');
 
   const logout = useCallback(() => {
     clearAuthStorage();
+
     setUser(null);
     setFarmerProfile(null);
     setAuthError('');
@@ -66,27 +83,31 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem(TOKEN_KEY);
 
     if (!token) {
+      setUser(null);
+      setFarmerProfile(null);
       setLoading(false);
+
       return null;
     }
 
     try {
-      const response = await getMe();
+      const responseData = await getMe();
+      const data = normalizeAuthData(responseData);
 
-      const userData = response.data?.user;
-      const profileData = response.data?.farmerProfile;
-
-      setUser(userData || null);
-      setFarmerProfile(profileData || null);
-
-      if (userData) {
-        localStorage.setItem(
-          USER_KEY,
-          JSON.stringify(userData)
-        );
+      if (!data.user) {
+        logout();
+        return null;
       }
 
-      return response.data;
+      setUser(data.user);
+      setFarmerProfile(data.farmerProfile);
+
+      localStorage.setItem(
+        USER_KEY,
+        JSON.stringify(data.user)
+      );
+
+      return data;
     } catch (error) {
       logout();
       throw error;
@@ -123,13 +144,22 @@ export const AuthProvider = ({ children }) => {
     setAuthError('');
 
     try {
-      const response = await loginRequest(credentials);
-      const data = response.data;
+      const responseData = await loginRequest(
+        credentials
+      );
+
+      const data = normalizeAuthData(responseData);
+
+      if (!data.token || !data.user) {
+        throw new Error(
+          'Login response did not include a token and user'
+        );
+      }
 
       persistAuth(data);
 
-      setUser(data.user || null);
-      setFarmerProfile(data.farmerProfile || null);
+      setUser(data.user);
+      setFarmerProfile(data.farmerProfile);
 
       return data;
     } catch (error) {
@@ -147,13 +177,18 @@ export const AuthProvider = ({ children }) => {
     setAuthError('');
 
     try {
-      const response = await registerFarmer(payload);
-      const data = response.data;
+      const responseData = await registerFarmer(
+        payload
+      );
 
-      persistAuth(data);
+      const data = normalizeAuthData(responseData);
 
-      setUser(data.user || null);
-      setFarmerProfile(data.farmerProfile || null);
+      if (data.token) {
+        persistAuth(data);
+      }
+
+      setUser(data.user);
+      setFarmerProfile(data.farmerProfile);
 
       return data;
     } catch (error) {
