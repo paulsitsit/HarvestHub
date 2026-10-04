@@ -61,7 +61,6 @@ const AppRoutes = () => {
         <Route element={<RoleRoute allowedRoles={['admin']} />}>
           <Route element={<AdminLayout />}>
             <Route
-              index
               path="/admin"
               element={<AdminDashboard />}
             />
