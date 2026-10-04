@@ -1,36 +1,41 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+
+import {
+  useForm
+} from 'react-hook-form';
+
 import {
   FiArrowRight,
   FiEye,
   FiEyeOff,
-  FiLock,
-  FiMail
+  FiLock
 } from 'react-icons/fi';
+
 import {
   Link,
-  useLocation,
   useNavigate
 } from 'react-router-dom';
+
 import Button from '../../components/common/Button.jsx';
 import GlassCard from '../../components/common/GlassCard.jsx';
 import Input from '../../components/common/Input.jsx';
 import useAuth from '../../hooks/useAuth.js';
 import useToast from '../../hooks/useToast.js';
 
-const getRedirectPath = (user, from) => {
-  if (from) {
-    return from;
+const getRedirectPath = (user) => {
+  if (user?.role === 'admin') {
+    return '/admin';
   }
 
-  return user?.role === 'admin'
-    ? '/admin/dashboard'
-    : '/farmer/dashboard';
+  if (user?.role === 'farmer') {
+    return '/farmer/dashboard';
+  }
+
+  return '/';
 };
 
 const Login = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { login } = useAuth();
   const { success, error } = useToast();
 
@@ -55,18 +60,27 @@ const Login = () => {
     try {
       const data = await login(formData);
 
+      console.log('LOGIN DATA:', data);
+      console.log('LOGIN USER:', data.user);
+
       success('Welcome back to HarvestHub.');
 
-      const from = location.state?.from;
-
       navigate(
-        getRedirectPath(data.user, from),
+        getRedirectPath(data.user),
         {
           replace: true
         }
       );
-    } catch {
-      error('Unable to log in. Check your credentials.');
+    } catch (requestError) {
+      console.error(
+        'LOGIN FAILED:',
+        requestError
+      );
+
+      error(
+        requestError?.response?.data?.message ||
+        'Unable to log in. Check your credentials.'
+      );
     }
   };
 
@@ -85,23 +99,30 @@ const Login = () => {
           </h1>
 
           <p className="mt-5 leading-8 text-white/70">
-            Manage your farmer profile, product listings, buyer
-            inquiries, reviews, and listing fees in one place.
+            Manage your farmer profile, product listings,
+            buyer inquiries, reviews, and listing fees in
+            one place.
           </p>
 
           <div className="mt-10 space-y-4 text-sm text-white/75">
             <p className="flex items-center gap-3">
-              <span className="text-[var(--gold-300)]">✓</span>
+              <span className="text-[var(--gold-300)]">
+                ✓
+              </span>
               Direct buyer inquiries
             </p>
 
             <p className="flex items-center gap-3">
-              <span className="text-[var(--gold-300)]">✓</span>
+              <span className="text-[var(--gold-300)]">
+                ✓
+              </span>
               Admin-reviewed listings
             </p>
 
             <p className="flex items-center gap-3">
-              <span className="text-[var(--gold-300)]">✓</span>
+              <span className="text-[var(--gold-300)]">
+                ✓
+              </span>
               Simple farmer dashboard
             </p>
           </div>
@@ -110,7 +131,7 @@ const Login = () => {
         <GlassCard className="rounded-3xl p-7 sm:p-10">
           <div className="mb-8">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--green-700)]">
-              Farmer login
+              Account login
             </p>
 
             <h1 className="mt-3 text-3xl font-extrabold text-[var(--green-900)]">
@@ -118,7 +139,7 @@ const Login = () => {
             </h1>
 
             <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
-              Log in to manage your farm and listings.
+              Log in to access your HarvestHub account.
             </p>
           </div>
 
@@ -144,7 +165,11 @@ const Login = () => {
             <div className="relative">
               <Input
                 label="Password"
-                type={showPassword ? 'text' : 'password'}
+                type={
+                  showPassword
+                    ? 'text'
+                    : 'password'
+                }
                 autoComplete="current-password"
                 placeholder="Your password"
                 error={errors.password?.message}
@@ -152,7 +177,8 @@ const Login = () => {
                   required: 'Password is required',
                   minLength: {
                     value: 8,
-                    message: 'Password must be at least 8 characters'
+                    message:
+                      'Password must be at least 8 characters'
                   }
                 })}
               />
@@ -160,7 +186,9 @@ const Login = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setShowPassword((value) => !value)
+                  setShowPassword(
+                    (value) => !value
+                  )
                 }
                 aria-label={
                   showPassword

@@ -2,10 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+
 import App from './App.jsx';
 import ErrorBoundary from './components/common/ErrorBoundary.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ToastProvider } from './context/ToastContext.jsx';
+
 import './index.css';
 import './styles/glass.css';
 import './styles/animations.css';
