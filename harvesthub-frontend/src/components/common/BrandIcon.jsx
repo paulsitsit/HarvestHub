@@ -5,20 +5,22 @@ const BrandIcon = ({
 }) => {
   const sizes = {
     xs: 'h-8 w-8',
-    sm: 'h-10 w-10',
-    md: 'h-16 w-16',
-    lg: 'h-24 w-24',
-    xl: 'h-32 w-32'
+    sm: 'h-11 w-11',
+    md: 'h-20 w-20',
+    lg: 'h-32 w-32',
+    xl: 'h-44 w-44'
   };
 
   return (
     <img
       src="/harvesthub-icon.png"
       alt="HarvestHub"
+      width="176"
+      height="176"
       className={[
         sizes[size] || sizes.md,
-        'shrink-0 object-contain',
-        rounded ? 'rounded-full' : '',
+        'block shrink-0 object-contain',
+        rounded ? 'rounded-2xl' : '',
         className
       ]
         .filter(Boolean)

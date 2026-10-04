@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import {
   FiLogIn,
   FiMenu,
@@ -6,11 +7,22 @@ import {
   FiUser,
   FiX
 } from 'react-icons/fi';
-import { NavLink, Link } from 'react-router-dom';
+
+import {
+  Link,
+  NavLink
+} from 'react-router-dom';
+
 import useAuth from '../../hooks/useAuth.js';
 
+const BRAND_ICON = '/harvesthub-icon.png';
+
 const PublicNavbar = () => {
-  const [open, setOpen] = useState(false);
+  const [
+    open,
+    setOpen
+  ] = useState(false);
+
   const {
     isAuthenticated,
     isFarmer,
@@ -30,6 +42,12 @@ const PublicNavbar = () => {
     setOpen(false);
   };
 
+  const dashboardPath = isAdmin
+    ? '/admin'
+    : isFarmer
+      ? '/farmer/dashboard'
+      : '/';
+
   return (
     <header className="glass-navbar sticky top-0 z-40">
       <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-4 px-5 lg:px-8">
@@ -39,12 +57,19 @@ const PublicNavbar = () => {
           className="flex items-center gap-3"
           aria-label="HarvestHub home"
         >
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--green-700)] text-xl text-white shadow-lg">
-            🌱
-          </span>
+          <img
+            src={BRAND_ICON}
+            alt="HarvestHub"
+            width="52"
+            height="52"
+            className="h-12 w-12 shrink-0 rounded-2xl object-contain shadow-lg"
+          />
 
           <span className="font-[Poppins] text-xl font-extrabold text-[var(--green-900)]">
-            Harvest<span className="text-[var(--gold-600)]">Hub</span>
+            Harvest
+            <span className="text-[var(--gold-600)]">
+              Hub
+            </span>
           </span>
         </Link>
 
@@ -54,6 +79,7 @@ const PublicNavbar = () => {
         >
           <NavLink
             to="/"
+            end
             className={navClass}
           >
             Home
@@ -77,7 +103,7 @@ const PublicNavbar = () => {
         <div className="hidden items-center gap-2 lg:flex">
           <Link
             to="/products"
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-[var(--green-700)]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-[var(--green-700)] hover:bg-[var(--green-100)]"
           >
             <FiPhone size={17} />
             Find a farmer
@@ -96,13 +122,7 @@ const PublicNavbar = () => {
           {isAuthenticated && (
             <>
               <Link
-                to={
-                  isAdmin
-                    ? '/admin/dashboard'
-                    : isFarmer
-                      ? '/farmer/dashboard'
-                      : '/'
-                }
+                to={dashboardPath}
                 className="gold-button"
               >
                 <FiUser size={17} />
@@ -122,7 +142,9 @@ const PublicNavbar = () => {
 
         <button
           type="button"
-          onClick={() => setOpen((value) => !value)}
+          onClick={() =>
+            setOpen((value) => !value)
+          }
           aria-label={
             open
               ? 'Close navigation menu'
@@ -147,6 +169,7 @@ const PublicNavbar = () => {
           >
             <NavLink
               to="/"
+              end
               onClick={closeMenu}
               className={navClass}
             >
@@ -184,11 +207,7 @@ const PublicNavbar = () => {
               {isAuthenticated && (
                 <div className="flex flex-col gap-2">
                   <Link
-                    to={
-                      isAdmin
-                        ? '/admin/dashboard'
-                        : '/farmer/dashboard'
-                    }
+                    to={dashboardPath}
                     onClick={closeMenu}
                     className="gold-button w-full"
                   >
