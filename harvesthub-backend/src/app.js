@@ -4,13 +4,22 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
 import authRoutes from './routes/authRoutes.js';
+import publicRoutes from './routes/publicRoutes.js';
+
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://harvest-hub-tau-ten.vercel.app',
+  process.env.CLIENT_URL
+].filter(Boolean);
 
 app.use(
   helmet({
@@ -22,7 +31,18 @@ app.use(
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // Allow requests without an Origin header, such as health checks.
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS origin not allowed: ${origin}`));
+    },
     credentials: true
   })
 );
@@ -39,6 +59,13 @@ app.use(
   express.static(path.resolve(__dirname, '../uploads'))
 );
 
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'HarvestHub API is running'
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
@@ -51,7 +78,9 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/public', publicRoutes);
 
+// Keep these last.
 app.use(notFound);
 app.use(errorHandler);
 
