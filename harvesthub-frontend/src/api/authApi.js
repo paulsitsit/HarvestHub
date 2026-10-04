@@ -1,12 +1,16 @@
 import axiosInstance from './axiosInstance.js';
 
+const unwrapResponse = (response) => {
+  return response.data?.data || response.data;
+};
+
 export const registerFarmer = async (payload) => {
   const response = await axiosInstance.post(
     '/auth/register',
     payload
   );
 
-  return response.data;
+  return unwrapResponse(response);
 };
 
 export const login = async (payload) => {
@@ -15,13 +19,13 @@ export const login = async (payload) => {
     payload
   );
 
-  return response.data;
+  return unwrapResponse(response);
 };
 
 export const getMe = async () => {
   const response = await axiosInstance.get('/auth/me');
 
-  return response.data;
+  return unwrapResponse(response);
 };
 
 export const changePassword = async (payload) => {
@@ -30,5 +34,5 @@ export const changePassword = async (payload) => {
     payload
   );
 
-  return response.data;
+  return unwrapResponse(response);
 };
