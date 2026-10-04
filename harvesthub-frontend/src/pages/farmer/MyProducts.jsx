@@ -1,17 +1,29 @@
-import { useEffect, useState } from 'react';
 import {
-    FiDivideSquare,
+  useCallback,
+  useEffect,
+  useState
+} from 'react';
+
+import {
   FiEdit2,
   FiPlus,
   FiTrash2
 } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+
+import {
+  Link
+} from 'react-router-dom';
+
 import {
   deleteProduct,
   getFarmerProducts,
   updateProductAvailability
 } from '../../api/farmerApi.js';
-import { getApiErrorMessage } from '../../api/axiosInstance.js';
+
+import {
+  getApiErrorMessage
+} from '../../api/axiosInstance.js';
+
 import Badge from '../../components/common/Badge.jsx';
 import Button from '../../components/common/Button.jsx';
 import ConfirmDialog from '../../components/common/ConfirmDialog.jsx';
@@ -20,43 +32,90 @@ import GlassCard from '../../components/common/GlassCard.jsx';
 import Input from '../../components/common/Input.jsx';
 import Loader from '../../components/common/Loader.jsx';
 import Select from '../../components/common/Select.jsx';
+
 import useToast from '../../hooks/useToast.js';
-import { formatCurrency } from '../../utils/formatCurrency.js';
-import { formatDate } from '../../utils/formatDate.js';
-import { API_ORIGIN } from '../../utils/constants.js';
+
+import {
+  formatCurrency
+} from '../../utils/formatCurrency.js';
+
+import {
+  formatDate
+} from '../../utils/formatDate.js';
+
+import {
+  API_ORIGIN
+} from '../../utils/constants.js';
 
 const MyProducts = () => {
-  const { success, error } = useToast();
+  const {
+    success,
+    error
+  } = useToast();
 
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [deleteTarget, setDeleteTarget] =
-    useState(null);
-  const [deleting, setDeleting] = useState(false);
+  const [
+    products,
+    setProducts
+  ] = useState([]);
 
-  const loadProducts = async () => {
-    try {
-      const response =
-        await getFarmerProducts({
-          limit: 100
-        });
+  const [
+    loading,
+    setLoading
+  ] = useState(true);
 
-      setProducts(response.data.products || []);
-    } catch (requestError) {
-      error(
-        getApiErrorMessage(
-          requestError,
-          'Unable to load products'
-        )
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [
+    deleteTarget,
+    setDeleteTarget
+  ] = useState(null);
+
+  const [
+    deleting,
+    setDeleting
+  ] = useState(false);
+
+  const loadProducts = useCallback(
+    async () => {
+      try {
+        setLoading(true);
+
+        const response =
+          await getFarmerProducts({
+            page: 1,
+            limit: 50
+          });
+
+        const productList =
+          response?.data?.products ||
+          response?.products ||
+          [];
+
+        setProducts(
+          Array.isArray(productList)
+            ? productList
+            : []
+        );
+      } catch (requestError) {
+        console.error(
+          'LOAD PRODUCTS ERROR:',
+          requestError
+        );
+
+        error(
+          getApiErrorMessage(
+            requestError,
+            'Unable to load products'
+          )
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [error]
+  );
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [loadProducts]);
 
   const handleAvailabilityChange = async (
     product,
@@ -145,11 +204,14 @@ const MyProducts = () => {
     setDeleting(true);
 
     try {
-      await deleteProduct(deleteTarget._id);
+      await deleteProduct(
+        deleteTarget._id
+      );
 
       setProducts((current) =>
         current.filter(
-          (item) => item._id !== deleteTarget._id
+          (item) =>
+            item._id !== deleteTarget._id
         )
       );
 
@@ -169,7 +231,9 @@ const MyProducts = () => {
 
   if (loading) {
     return (
-      <Loader label="Loading your products..." />
+      <Loader
+        label="Loading your products..."
+      />
     );
   }
 
@@ -233,18 +297,26 @@ const MyProducts = () => {
                         {product.name}
                       </h2>
 
-                      <Badge status={product.status} />
+                      <Badge
+                        status={product.status}
+                      />
                     </div>
 
                     <p className="mt-2 text-lg font-extrabold text-[var(--gold-600)]">
-                      {formatCurrency(product.price)}
+                      {formatCurrency(
+                        product.price
+                      )}
+
                       <span className="ml-1 text-xs text-[var(--muted)]">
                         / {product.unit}
                       </span>
                     </p>
 
                     <p className="mt-2 text-xs text-[var(--muted)]">
-                      Created {formatDate(product.createdAt)}
+                      Created{' '}
+                      {formatDate(
+                        product.createdAt
+                      )}
                     </p>
                   </div>
                 </div>
@@ -252,7 +324,10 @@ const MyProducts = () => {
                 <div className="grid gap-4 sm:grid-cols-3 xl:min-w-[520px]">
                   <Select
                     label="Availability"
-                    value={product.availability}
+                    value={
+                      product.availability ||
+                      'available'
+                    }
                     onChange={(event) =>
                       handleAvailabilityChange(
                         product,
@@ -263,9 +338,11 @@ const MyProducts = () => {
                     <option value="available">
                       Available
                     </option>
+
                     <option value="low_stock">
                       Low stock
                     </option>
+
                     <option value="sold_out">
                       Sold out
                     </option>
@@ -275,7 +352,9 @@ const MyProducts = () => {
                     label="Quantity"
                     type="number"
                     min="0"
-                    value={product.quantity}
+                    value={
+                      product.quantity ?? ''
+                    }
                     onChange={(event) =>
                       handleQuantityChange(
                         product,
@@ -295,6 +374,7 @@ const MyProducts = () => {
                     </Link>
 
                     <Button
+                      type="button"
                       variant="danger"
                       onClick={() =>
                         setDeleteTarget(product)
@@ -313,10 +393,14 @@ const MyProducts = () => {
 
       <ConfirmDialog
         open={Boolean(deleteTarget)}
-        onClose={() => setDeleteTarget(null)}
+        onClose={() =>
+          setDeleteTarget(null)
+        }
         onConfirm={handleDelete}
         title="Remove product?"
-        message={`Remove ${deleteTarget?.name || 'this product'} from your listings?`}
+        message={`Remove ${
+          deleteTarget?.name || 'this product'
+        } from your listings?`}
         confirmText="Remove product"
         danger
         loading={deleting}
