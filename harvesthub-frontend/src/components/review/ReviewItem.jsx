@@ -13,7 +13,7 @@ const ReviewItem = ({ review }) => {
 
           <div>
             <h3 className="text-sm font-extrabold text-[var(--green-900)]">
-              {review.buyerName || 'Guest buyer'}
+              {review.buyerName}
             </h3>
 
             <p className="text-xs text-[var(--muted)]">

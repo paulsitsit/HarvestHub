@@ -32,16 +32,16 @@ const FarmerApprovalTable = ({
   return (
     <GlassCard className="overflow-hidden p-0">
       <div className="overflow-x-auto">
-        <table className="min-w-[980px] w-full text-left">
+        <table className="min-w-245 w-full text-left">
           <caption className="sr-only">
             Farmer account management table
           </caption>
 
-          <thead className="bg-[var(--green-100)]">
+          <thead className="bg-(--green-100)">
             <tr>
               <th
                 scope="col"
-                className="px-5 py-4 text-xs font-extrabold uppercase tracking-wider text-[var(--green-900)]"
+                className="px-5 py-4 text-xs font-extrabold uppercase tracking-wider text-(--green-900)"
               >
                 Farmer
               </th>
