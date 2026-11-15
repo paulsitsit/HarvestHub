@@ -32,15 +32,6 @@ const toPositiveInteger = (value, fallback, maximum) => {
   return Math.min(parsed, maximum);
 };
 
-const addFarmerVisibilityFilter = (filter) => {
-  return {
-    ...filter,
-    farmer: {
-      $exists: true
-    }
-  };
-};
-
 export const getCategories = asyncHandler(async (req, res) => {
   const categories = await Category.find({})
     .sort({ name: 1 })
@@ -168,19 +159,49 @@ export const getPublicProducts = asyncHandler(async (req, res) => {
 
   const productSort = sortMap[sort] || sortMap.newest;
 
-  const [products, total] = await Promise.all([
-    Product.find(filter)
-      .populate('category', 'name slug icon')
-      .populate({
-        path: 'farmer',
-        select:
-          'farmName municipality province profilePhoto avgRating reviewCount contactNumber'
-      })
-      .sort(productSort)
-      .skip((currentPage - 1) * pageLimit)
-      .limit(pageLimit)
-      .lean(),
+  const productQuery = sort === 'rating'
+    ? Product.aggregate([
+        { $match: filter },
+        {
+          $lookup: {
+            from: FarmerProfile.collection.name,
+            localField: 'farmer',
+            foreignField: '_id',
+            as: 'farmerRating'
+          }
+        },
+        { $unwind: '$farmerRating' },
+        {
+          $sort: {
+            'farmerRating.avgRating': -1,
+            'farmerRating.reviewCount': -1,
+            createdAt: -1
+          }
+        },
+        { $skip: (currentPage - 1) * pageLimit },
+        { $limit: pageLimit },
+        { $project: { farmerRating: 0 } }
+      ]).then((items) => Product.populate(items, [
+        { path: 'category', select: 'name slug icon' },
+        {
+          path: 'farmer',
+          select: 'farmName municipality province profilePhoto avgRating reviewCount contactNumber'
+        }
+      ]))
+    : Product.find(filter)
+        .populate('category', 'name slug icon')
+        .populate({
+          path: 'farmer',
+          select:
+            'farmName municipality province profilePhoto avgRating reviewCount contactNumber'
+        })
+        .sort(productSort)
+        .skip((currentPage - 1) * pageLimit)
+        .limit(pageLimit)
+        .lean();
 
+  const [products, total] = await Promise.all([
+    productQuery,
     Product.countDocuments(filter)
   ]);
 
