@@ -79,6 +79,8 @@ export const getFarmerPayments = asyncHandler(async (req, res) => {
   return successResponse(res, {
     listingFee: LISTING_FEE,
     listingDays: Number(process.env.LISTING_DAYS || 30),
+    gcashAccountName: process.env.GCASH_ACCOUNT_NAME || 'HarvestHub Marketplace',
+    gcashAccountNumber: process.env.GCASH_ACCOUNT_NUMBER || '',
     products,
     payments,
     pagination: {
