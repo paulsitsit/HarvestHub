@@ -111,7 +111,7 @@ export const getPublicProducts = asyncHandler(async (req, res) => {
 
   const farmerFilter = {
     status: FARMER_STATUSES.APPROVED,
-    isFlaggedFraud: false
+    isFlaggedFraud: { $ne: true }
   };
 
   if (municipality.trim()) {
@@ -245,7 +245,7 @@ export const getPublicProductById = asyncHandler(async (req, res) => {
       path: 'farmer',
       match: {
         status: FARMER_STATUSES.APPROVED,
-        isFlaggedFraud: false
+        isFlaggedFraud: { $ne: true }
       },
       select:
         'farmName bio address municipality province contactNumber profilePhoto farmPhotos avgRating reviewCount status'
@@ -295,7 +295,7 @@ export const getPublicFarmerById = asyncHandler(async (req, res) => {
   const farmer = await FarmerProfile.findOne({
     _id: id,
     status: FARMER_STATUSES.APPROVED,
-    isFlaggedFraud: false
+    isFlaggedFraud: { $ne: true }
   })
     .select(
       'farmName bio address municipality province contactNumber profilePhoto farmPhotos avgRating reviewCount status createdAt'
@@ -346,7 +346,7 @@ export const getFarmerReviews = asyncHandler(async (req, res) => {
   const farmer = await FarmerProfile.findOne({
     _id: id,
     status: FARMER_STATUSES.APPROVED,
-    isFlaggedFraud: false
+    isFlaggedFraud: { $ne: true }
   }).select('_id avgRating reviewCount');
 
   if (!farmer) {
@@ -375,7 +375,7 @@ export const getFarmerReviews = asyncHandler(async (req, res) => {
 export const getFeatured = asyncHandler(async (req, res) => {
   const visibleFarmerFilter = {
     status: FARMER_STATUSES.APPROVED,
-    isFlaggedFraud: false
+    isFlaggedFraud: { $ne: true }
   };
 
   const [visibleFarmerIds, farmers] = await Promise.all([
@@ -464,7 +464,7 @@ export const createInquiry = asyncHandler(async (req, res) => {
   const farmer = await FarmerProfile.findOne({
     _id: publicProduct.farmer,
     status: FARMER_STATUSES.APPROVED,
-    isFlaggedFraud: false
+    isFlaggedFraud: { $ne: true }
   });
 
   if (!farmer) {
@@ -526,7 +526,7 @@ export const createReview = asyncHandler(async (req, res) => {
   const farmerProfile = await FarmerProfile.findOne({
     _id: farmer,
     status: FARMER_STATUSES.APPROVED,
-    isFlaggedFraud: false
+    isFlaggedFraud: { $ne: true }
   });
 
   if (!farmerProfile) {

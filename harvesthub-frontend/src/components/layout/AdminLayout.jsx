@@ -29,6 +29,8 @@ const AdminLayout = () => {
     <div className="relative min-h-screen overflow-x-hidden">
       <AnimatedBackground />
 
+      <AdminSidebar />
+
       <header className="glass-navbar sticky top-0 z-40 lg:ml-72">
         <div className="mx-auto flex min-h-[72px] max-w-[1600px] items-center justify-between gap-4 px-5 lg:px-8">
           <div className="flex items-center gap-3">
