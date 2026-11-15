@@ -297,6 +297,9 @@ export const getPublicFarmerById = asyncHandler(async (req, res) => {
     status: FARMER_STATUSES.APPROVED,
     isFlaggedFraud: false
   })
+    .select(
+      'farmName bio address municipality province contactNumber profilePhoto farmPhotos avgRating reviewCount status createdAt'
+    )
     .populate('user', 'name')
     .lean();
 
