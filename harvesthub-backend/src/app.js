@@ -81,6 +81,23 @@ app.use(
   )
 );
 
+app.get('/uploads/cloudinary/*', (req, res) => {
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const publicId = req.params[0];
+
+  if (!cloudName || !publicId || !/^[a-zA-Z0-9/_-]+$/.test(publicId)) {
+    return res.status(404).json({
+      success: false,
+      message: 'Image not found'
+    });
+  }
+
+  return res.redirect(
+    302,
+    `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}`
+  );
+});
+
 app.use(
   '/uploads',
   express.static(
