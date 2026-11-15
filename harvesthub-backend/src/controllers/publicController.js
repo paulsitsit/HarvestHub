@@ -32,15 +32,6 @@ const toPositiveInteger = (value, fallback, maximum) => {
   return Math.min(parsed, maximum);
 };
 
-const addFarmerVisibilityFilter = (filter) => {
-  return {
-    ...filter,
-    farmer: {
-      $exists: true
-    }
-  };
-};
-
 export const getCategories = asyncHandler(async (req, res) => {
   const categories = await Category.find({})
     .sort({ name: 1 })
@@ -168,19 +159,49 @@ export const getPublicProducts = asyncHandler(async (req, res) => {
 
   const productSort = sortMap[sort] || sortMap.newest;
 
-  const [products, total] = await Promise.all([
-    Product.find(filter)
-      .populate('category', 'name slug icon')
-      .populate({
-        path: 'farmer',
-        select:
-          'farmName municipality province profilePhoto avgRating reviewCount contactNumber'
-      })
-      .sort(productSort)
-      .skip((currentPage - 1) * pageLimit)
-      .limit(pageLimit)
-      .lean(),
+  const productQuery = sort === 'rating'
+    ? Product.aggregate([
+        { $match: filter },
+        {
+          $lookup: {
+            from: FarmerProfile.collection.name,
+            localField: 'farmer',
+            foreignField: '_id',
+            as: 'farmerRating'
+          }
+        },
+        { $unwind: '$farmerRating' },
+        {
+          $sort: {
+            'farmerRating.avgRating': -1,
+            'farmerRating.reviewCount': -1,
+            createdAt: -1
+          }
+        },
+        { $skip: (currentPage - 1) * pageLimit },
+        { $limit: pageLimit },
+        { $project: { farmerRating: 0 } }
+      ]).then((items) => Product.populate(items, [
+        { path: 'category', select: 'name slug icon' },
+        {
+          path: 'farmer',
+          select: 'farmName municipality province profilePhoto avgRating reviewCount contactNumber'
+        }
+      ]))
+    : Product.find(filter)
+        .populate('category', 'name slug icon')
+        .populate({
+          path: 'farmer',
+          select:
+            'farmName municipality province profilePhoto avgRating reviewCount contactNumber'
+        })
+        .sort(productSort)
+        .skip((currentPage - 1) * pageLimit)
+        .limit(pageLimit)
+        .lean();
 
+  const [products, total] = await Promise.all([
+    productQuery,
     Product.countDocuments(filter)
   ]);
 
@@ -222,6 +243,10 @@ export const getPublicProductById = asyncHandler(async (req, res) => {
     .populate('category', 'name slug icon')
     .populate({
       path: 'farmer',
+      match: {
+        status: FARMER_STATUSES.APPROVED,
+        isFlaggedFraud: false
+      },
       select:
         'farmName bio address municipality province contactNumber profilePhoto farmPhotos avgRating reviewCount status'
     })
@@ -272,6 +297,9 @@ export const getPublicFarmerById = asyncHandler(async (req, res) => {
     status: FARMER_STATUSES.APPROVED,
     isFlaggedFraud: false
   })
+    .select(
+      'farmName bio address municipality province contactNumber profilePhoto farmPhotos avgRating reviewCount status createdAt'
+    )
     .populate('user', 'name')
     .lean();
 
@@ -345,29 +373,16 @@ export const getFarmerReviews = asyncHandler(async (req, res) => {
 });
 
 export const getFeatured = asyncHandler(async (req, res) => {
-  const [products, farmers] = await Promise.all([
-    Product.find({
-      ...publicProductFilter()
-    })
-      .populate('category', 'name slug icon')
-      .populate({
-        path: 'farmer',
-        select:
-          'farmName municipality province profilePhoto avgRating reviewCount'
-      })
-      .sort({
-        views: -1,
-        createdAt: -1
-      })
-      .limit(8)
-      .lean(),
+  const visibleFarmerFilter = {
+    status: FARMER_STATUSES.APPROVED,
+    isFlaggedFraud: false
+  };
 
+  const [visibleFarmerIds, farmers] = await Promise.all([
+    FarmerProfile.find(visibleFarmerFilter).distinct('_id'),
     FarmerProfile.find({
-      status: FARMER_STATUSES.APPROVED,
-      isFlaggedFraud: false,
-      reviewCount: {
-        $gt: 0
-      }
+      ...visibleFarmerFilter,
+      reviewCount: { $gt: 0 }
     })
       .populate('user', 'name')
       .sort({
@@ -377,6 +392,23 @@ export const getFeatured = asyncHandler(async (req, res) => {
       .limit(6)
       .lean()
   ]);
+
+  const products = await Product.find({
+    ...publicProductFilter(),
+    farmer: { $in: visibleFarmerIds }
+  })
+    .populate('category', 'name slug icon')
+    .populate({
+      path: 'farmer',
+      select:
+        'farmName municipality province profilePhoto avgRating reviewCount'
+    })
+    .sort({
+      views: -1,
+      createdAt: -1
+    })
+    .limit(8)
+    .lean();
 
   return successResponse(res, {
     products,

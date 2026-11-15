@@ -10,6 +10,8 @@ import {
 } from '../config/constants.js';
 import { recomputeFarmerRating } from '../services/ratingService.js';
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const isValidObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id);
 };
@@ -61,19 +63,10 @@ export const getAdminReviews = asyncHandler(async (req, res) => {
   }
 
   if (search.trim()) {
+    const searchRegex = new RegExp(escapeRegex(search.trim()), 'i');
     filter.$or = [
-      {
-        buyerName: {
-          $regex: search.trim(),
-          $options: 'i'
-        }
-      },
-      {
-        comment: {
-          $regex: search.trim(),
-          $options: 'i'
-        }
-      }
+      { buyerName: searchRegex },
+      { comment: searchRegex }
     ];
   }
 

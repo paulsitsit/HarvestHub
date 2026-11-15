@@ -8,7 +8,7 @@ import { getApiErrorMessage } from '../../api/axiosInstance.js';
 import Badge from '../../components/common/Badge.jsx';
 import GlassCard from '../../components/common/GlassCard.jsx';
 import Loader from '../../components/common/Loader.jsx';
-import { API_ORIGIN } from '../../utils/constants.js';
+import { getImageUrl } from '../../utils/getImageUrl.js';
 import { formatCurrency } from '../../utils/formatCurrency.js';
 import { formatDate } from '../../utils/formatDate.js';
 import useToast from '../../hooks/useToast.js';
@@ -78,7 +78,7 @@ const PaymentDetails = () => {
   }
 
   const proofUrl = payment.proofImage
-    ? `${API_ORIGIN}${payment.proofImage}`
+    ? getImageUrl(payment.proofImage)
     : '';
 
   return (

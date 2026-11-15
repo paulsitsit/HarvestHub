@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 import Payment from '../models/Payment.js';
+import FarmerProfile from '../models/FarmerProfile.js';
+import User from '../models/User.js';
+import Product from '../models/Product.js';
 import ActivityLog from '../models/ActivityLog.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { successResponse } from '../utils/apiResponse.js';
@@ -13,6 +16,10 @@ import {
 
 const isValidObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id);
+};
+
+const escapeRegex = (value) => {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
 const writeActivityLog = async ({
@@ -51,6 +58,48 @@ export const getAdminPayments = asyncHandler(async (req, res) => {
     filter.status = status;
   }
 
+  const searchTerm = String(search).trim();
+
+  if (searchTerm) {
+    const searchRegex = new RegExp(escapeRegex(searchTerm), 'i');
+
+    // Resolve related names before pagination. Searching populated fields
+    // after skip/limit only searched the current page and returned wrong totals.
+    const [users, farmers, products] = await Promise.all([
+      User.find({ name: searchRegex }).select('_id').lean(),
+      FarmerProfile.find({ farmName: searchRegex }).select('_id').lean(),
+      Product.find({ name: searchRegex }).select('_id').lean()
+    ]);
+
+    const farmerIds = new Set(farmers.map((farmer) => String(farmer._id)));
+
+    if (users.length) {
+      const profiles = await FarmerProfile.find({
+        user: { $in: users.map((user) => user._id) }
+      }).select('_id').lean();
+
+      profiles.forEach((profile) => farmerIds.add(String(profile._id)));
+    }
+
+    const searchConditions = [
+      { referenceNumber: searchRegex }
+    ];
+
+    if (farmerIds.size) {
+      searchConditions.push({
+        farmer: { $in: [...farmerIds].map((id) => new mongoose.Types.ObjectId(id)) }
+      });
+    }
+
+    if (products.length) {
+      searchConditions.push({
+        product: { $in: products.map((product) => product._id) }
+      });
+    }
+
+    filter.$or = searchConditions;
+  }
+
   const [payments, total] = await Promise.all([
     Payment.find(filter)
       .populate({
@@ -75,35 +124,8 @@ export const getAdminPayments = asyncHandler(async (req, res) => {
     Payment.countDocuments(filter)
   ]);
 
-  let filteredPayments = payments;
-
-  if (search.trim()) {
-    const searchTerm = search.trim().toLowerCase();
-
-    filteredPayments = payments.filter((payment) => {
-      const farmerName =
-        payment.farmer?.user?.name?.toLowerCase() || '';
-
-      const farmName =
-        payment.farmer?.farmName?.toLowerCase() || '';
-
-      const productName =
-        payment.product?.name?.toLowerCase() || '';
-
-      const reference =
-        payment.referenceNumber?.toLowerCase() || '';
-
-      return [
-        farmerName,
-        farmName,
-        productName,
-        reference
-      ].some((value) => value.includes(searchTerm));
-    });
-  }
-
   return successResponse(res, {
-    payments: filteredPayments,
+    payments,
     pagination: {
       page: currentPage,
       limit: pageLimit,

@@ -20,7 +20,7 @@ import ReviewList from '../../components/review/ReviewList.jsx';
 import ReviewForm from '../../components/review/ReviewForm.jsx';
 import { formatCurrency } from '../../utils/formatCurrency.js';
 import { formatDate } from '../../utils/formatDate.js';
-import { API_ORIGIN } from '../../utils/constants.js';
+import { getImageUrl } from '../../utils/getImageUrl.js';
 import useToast from '../../hooks/useToast.js';
 
 const ProductDetails = () => {
@@ -108,7 +108,7 @@ const ProductDetails = () => {
   const farmer = product.farmer || {};
 
   const farmerImage = farmer.profilePhoto
-    ? `${API_ORIGIN}${farmer.profilePhoto}`
+    ? getImageUrl(farmer.profilePhoto)
     : null;
 
   return (

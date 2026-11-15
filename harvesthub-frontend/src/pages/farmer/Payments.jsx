@@ -95,8 +95,8 @@ const Payments = () => {
         </h1>
 
         <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
-          Each approved product needs a verified {formatCurrency(20)}{' '}
-          listing fee for 30 days.
+          Each approved product needs a verified {formatCurrency(data?.listingFee ?? 20)}{' '}
+          listing fee for {data?.listingDays ?? 30} days.
         </p>
       </div>
 
@@ -116,7 +116,7 @@ const Payments = () => {
             </h2>
 
             <p className="mt-3 text-sm leading-7 text-white/70">
-              Send {formatCurrency(20)} to your HarvestHub payment
+              Send {formatCurrency(data?.listingFee ?? 20)} to your HarvestHub payment
               account, then upload the receipt screenshot and reference
               number below.
             </p>
@@ -124,12 +124,12 @@ const Payments = () => {
             <div className="mt-5 rounded-2xl bg-white/10 p-4 text-sm text-white/85">
               <p>
                 <span className="font-bold">Account name:</span>{' '}
-                HarvestHub Marketplace
+                {data?.gcashAccountName || 'HarvestHub Marketplace'}
               </p>
 
               <p className="mt-2">
                 <span className="font-bold">GCash number:</span>{' '}
-                Configure your official number here
+                {data?.gcashAccountNumber || 'GCash account number not configured'}
               </p>
             </div>
           </div>

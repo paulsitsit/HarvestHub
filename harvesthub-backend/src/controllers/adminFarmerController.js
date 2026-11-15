@@ -10,6 +10,8 @@ import {
   PRODUCT_STATUSES
 } from '../config/constants.js';
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const isValidObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id);
 };
@@ -58,23 +60,21 @@ export const getAdminFarmers = asyncHandler(async (req, res) => {
   const userFilter = {};
 
   if (search.trim()) {
+    const searchRegex = new RegExp(escapeRegex(search.trim()), 'i');
     userFilter.$or = [
       {
         name: {
-          $regex: search.trim(),
-          $options: 'i'
+          $regex: searchRegex
         }
       },
       {
         email: {
-          $regex: search.trim(),
-          $options: 'i'
+          $regex: searchRegex
         }
       },
       {
         phone: {
-          $regex: search.trim(),
-          $options: 'i'
+          $regex: searchRegex
         }
       }
     ];
@@ -86,20 +86,17 @@ export const getAdminFarmers = asyncHandler(async (req, res) => {
     filter.$or = [
       {
         farmName: {
-          $regex: search.trim(),
-          $options: 'i'
+          $regex: searchRegex
         }
       },
       {
         municipality: {
-          $regex: search.trim(),
-          $options: 'i'
+          $regex: searchRegex
         }
       },
       {
         province: {
-          $regex: search.trim(),
-          $options: 'i'
+          $regex: searchRegex
         }
       },
       {
