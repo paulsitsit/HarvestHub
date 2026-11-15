@@ -10,7 +10,7 @@ import {
 } from '../config/constants.js';
 import { recomputeFarmerRating } from '../services/ratingService.js';
 
-const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\const isValidObjectId = (id) => {');
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const isValidObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id);
