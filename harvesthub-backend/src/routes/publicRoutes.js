@@ -24,33 +24,45 @@ router.get(
   '/products',
   [
     query('search')
-      .optional()
+      .optional({ values: 'falsy' })
       .trim()
       .isLength({ max: 150 })
       .withMessage('Search is too long'),
 
+    query('category')
+      .optional({ values: 'falsy' })
+      .trim()
+      .isLength({ max: 100 })
+      .withMessage('Category is too long'),
+
+    query('municipality')
+      .optional({ values: 'falsy' })
+      .trim()
+      .isLength({ max: 100 })
+      .withMessage('Municipality is too long'),
+
     query('minPrice')
-      .optional()
+      .optional({ values: 'falsy' })
       .isFloat({ min: 0 })
       .withMessage('Minimum price must be non-negative'),
 
     query('maxPrice')
-      .optional()
+      .optional({ values: 'falsy' })
       .isFloat({ min: 0 })
       .withMessage('Maximum price must be non-negative'),
 
     query('minRating')
-      .optional()
+      .optional({ values: 'falsy' })
       .isFloat({ min: 0, max: 5 })
       .withMessage('Rating must be between 0 and 5'),
 
     query('availability')
-      .optional()
+      .optional({ values: 'falsy' })
       .isIn(['available', 'low_stock', 'sold_out'])
       .withMessage('Invalid availability'),
 
     query('sort')
-      .optional()
+      .optional({ values: 'falsy' })
       .isIn([
         'newest',
         'oldest',
