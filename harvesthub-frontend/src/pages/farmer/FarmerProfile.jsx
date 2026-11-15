@@ -16,7 +16,7 @@ import Input from '../../components/common/Input.jsx';
 import Loader from '../../components/common/Loader.jsx';
 import useAuth from '../../hooks/useAuth.js';
 import useToast from '../../hooks/useToast.js';
-import { API_ORIGIN } from '../../utils/constants.js';
+import { getImageUrl } from '../../utils/getImageUrl.js';
 
 const FarmerProfile = () => {
   const {
@@ -314,7 +314,7 @@ const FarmerProfile = () => {
         <p className="text-xs text-[var(--muted)]">
           Current profile photo:{' '}
           <a
-            href={`${API_ORIGIN}${profile.profilePhoto}`}
+            href={getImageUrl(profile.profilePhoto)}
             target="_blank"
             rel="noreferrer"
             className="font-bold text-[var(--green-700)] underline"
