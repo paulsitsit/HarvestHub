@@ -79,6 +79,12 @@ router.get(
   '/farmers',
   adminOnly,
   [
+    query('search')
+      .optional()
+      .trim()
+      .isLength({ max: 150 })
+      .withMessage('Search is too long'),
+
     query('status')
       .optional()
       .isIn([
@@ -221,6 +227,12 @@ router.get(
   '/products',
   adminOnly,
   [
+    query('search')
+      .optional()
+      .trim()
+      .isLength({ max: 150 })
+      .withMessage('Search is too long'),
+
     query('status')
       .optional()
       .isIn([
@@ -339,6 +351,12 @@ router.get(
   '/payments',
   adminOnly,
   [
+    query('search')
+      .optional()
+      .trim()
+      .isLength({ max: 150 })
+      .withMessage('Search is too long'),
+
     query('status')
       .optional()
       .isIn([
