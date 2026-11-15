@@ -145,7 +145,7 @@ const Home = () => {
                 type="submit"
                 className="gold-button"
               >
-                Search produce
+                Search
               </button>
             </form>
 
