@@ -41,6 +41,15 @@ export const getCategories = asyncHandler(async (req, res) => {
 });
 
 export const getPublicProducts = asyncHandler(async (req, res) => {
+  // Blank numeric filters mean no constraint, not zero. Preserve explicit 0.
+  const normalizedQuery = { ...req.query };
+  for (const key of ['minPrice', 'maxPrice', 'minRating']) {
+    const value = normalizedQuery[key];
+    if (value === null || (typeof value === 'string' && value.trim() === '')) {
+      normalizedQuery[key] = undefined;
+    }
+  }
+
   const {
     search = '',
     category = '',
@@ -52,7 +61,7 @@ export const getPublicProducts = asyncHandler(async (req, res) => {
     sort = 'newest',
     page = 1,
     limit = 12
-  } = req.query;
+  } = normalizedQuery;
 
   const currentPage = toPositiveInteger(page, 1, 100000);
   const pageLimit = toPositiveInteger(limit, 12, 48);
