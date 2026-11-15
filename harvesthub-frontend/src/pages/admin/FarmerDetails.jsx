@@ -14,7 +14,7 @@ import GlassCard from '../../components/common/GlassCard.jsx';
 import Loader from '../../components/common/Loader.jsx';
 import ProductApprovalTable from '../../components/admin/ProductApprovalTable.jsx';
 import { formatDate } from '../../utils/formatDate.js';
-import { API_ORIGIN } from '../../utils/constants.js';
+import { getImageUrl } from '../../utils/getImageUrl.js';
 import useToast from '../../hooks/useToast.js';
 
 const FarmerDetails = () => {
@@ -88,7 +88,7 @@ const FarmerDetails = () => {
   } = data;
 
   const farmerImage = farmer.profilePhoto
-    ? `${API_ORIGIN}${farmer.profilePhoto}`
+    ? getImageUrl(farmer.profilePhoto)
     : null;
 
   return (
