@@ -74,8 +74,7 @@ export const getAdminFarmers = asyncHandler(async (req, res) => {
       },
       {
         phone: {
-          $regex: search.trim(),
-          $options: 'i'
+          $regex: searchRegex
         }
       }
     ];
@@ -87,20 +86,17 @@ export const getAdminFarmers = asyncHandler(async (req, res) => {
     filter.$or = [
       {
         farmName: {
-          $regex: search.trim(),
-          $options: 'i'
+          $regex: searchRegex
         }
       },
       {
         municipality: {
-          $regex: search.trim(),
-          $options: 'i'
+          $regex: searchRegex
         }
       },
       {
         province: {
-          $regex: search.trim(),
-          $options: 'i'
+          $regex: searchRegex
         }
       },
       {
