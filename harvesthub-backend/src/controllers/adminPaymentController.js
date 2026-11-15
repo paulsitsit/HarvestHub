@@ -72,7 +72,6 @@ export const getAdminPayments = asyncHandler(async (req, res) => {
     ]);
 
     const farmerIds = new Set(farmers.map((farmer) => String(farmer._id)));
-    users.forEach((user) => farmerIds.add(String(user._id)));
 
     if (users.length) {
       const profiles = await FarmerProfile.find({
