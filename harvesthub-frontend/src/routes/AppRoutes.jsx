@@ -73,6 +73,7 @@ const AppRoutes = () => (
       <Route path="reviews" element={<MyReviews />} />
       <Route path="payments" element={<Payments />} />
       <Route path="payments/proof" element={<PaymentProofForm />} />
+      <Route path="inquiries" element={<ReceivedOrders />} />
       <Route path="orders" element={<ReceivedOrders />} />
     </Route>
     <Route path="*" element={<NotFound />} />
