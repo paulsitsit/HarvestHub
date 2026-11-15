@@ -15,7 +15,7 @@ import ProductGrid from '../../components/product/ProductGrid.jsx';
 import ReviewForm from '../../components/review/ReviewForm.jsx';
 import ReviewList from '../../components/review/ReviewList.jsx';
 import StarRating from '../../components/common/StarRating.jsx';
-import { API_ORIGIN } from '../../utils/constants.js';
+import { getImageUrl } from '../../utils/getImageUrl.js';
 import useToast from '../../hooks/useToast.js';
 
 const FarmerPublicProfile = () => {
@@ -112,7 +112,7 @@ const FarmerPublicProfile = () => {
   } = data;
 
   const profileImage = farmer.profilePhoto
-    ? `${API_ORIGIN}${farmer.profilePhoto}`
+    ? getImageUrl(farmer.profilePhoto)
     : null;
 
   const phone =
