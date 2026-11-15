@@ -14,6 +14,8 @@ import {
   ROLES
 } from '../config/constants.js';
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\const isValidObjectId = (id) => {');
+
 const isValidObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id);
 };
@@ -70,25 +72,11 @@ export const getAdminUsers = asyncHandler(async (req, res) => {
   }
 
   if (search.trim()) {
+    const searchRegex = new RegExp(escapeRegex(search.trim()), 'i');
     filter.$or = [
-      {
-        name: {
-          $regex: search.trim(),
-          $options: 'i'
-        }
-      },
-      {
-        email: {
-          $regex: search.trim(),
-          $options: 'i'
-        }
-      },
-      {
-        phone: {
-          $regex: search.trim(),
-          $options: 'i'
-        }
-      }
+      { name: searchRegex },
+      { email: searchRegex },
+      { phone: searchRegex }
     ];
   }
 
