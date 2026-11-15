@@ -9,7 +9,7 @@ import {
   PRODUCT_STATUSES
 } from '../config/constants.js';
 
-const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\const isValidObjectId = (id) => {');
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const isValidObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id);
