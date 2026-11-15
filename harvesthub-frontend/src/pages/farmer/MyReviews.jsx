@@ -4,7 +4,6 @@ import {
 } from '../../api/farmerApi.js';
 import { getApiErrorMessage } from '../../api/axiosInstance.js';
 import EmptyState from '../../components/common/EmptyState.jsx';
-import GlassCard from '../../components/common/GlassCard.jsx';
 import Loader from '../../components/common/Loader.jsx';
 import ReviewList from '../../components/review/ReviewList.jsx';
 import RatingBreakdown from '../../components/review/RatingBreakdown.jsx';
@@ -64,11 +63,11 @@ const MyReviews = () => {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--green-700)]">
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-(--green-700)">
           Customer feedback
         </p>
 
-        <h1 className="mt-2 text-4xl font-extrabold text-[var(--green-900)]">
+        <h1 className="mt-2 text-4xl font-extrabold text-(--green-900)">
           My reviews
         </h1>
       </div>

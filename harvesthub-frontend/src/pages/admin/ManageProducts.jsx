@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   approveProduct,
   getAdminProducts,
@@ -27,7 +27,7 @@ const ManageProducts = () => {
   const [modal, setModal] = useState(null);
   const [reason, setReason] = useState('');
 
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -49,14 +49,11 @@ const ManageProducts = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [error, filters.search, filters.status]);
 
   useEffect(() => {
-    loadProducts();
-  }, [
-    filters.search,
-    filters.status
-  ]);
+    Promise.resolve().then(loadProducts);
+  }, [loadProducts]);
 
   const runAction = async (
     product,
@@ -147,11 +144,11 @@ const ManageProducts = () => {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--green-700)]">
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-(--green-700)">
           Listing moderation
         </p>
 
-        <h1 className="mt-2 text-4xl font-extrabold text-[var(--green-900)]">
+        <h1 className="mt-2 text-4xl font-extrabold text-(--green-900)">
           Manage products
         </h1>
       </div>
@@ -222,7 +219,7 @@ const ManageProducts = () => {
         }
         size="sm"
       >
-        <p className="text-sm leading-7 text-[var(--muted)]">
+        <p className="text-sm leading-7 text-(--muted)">
           {modal?.product?.name}
         </p>
 
@@ -230,7 +227,7 @@ const ManageProducts = () => {
           <div className="mt-5">
             <label
               htmlFor="product-action-reason"
-              className="block text-sm font-bold text-[var(--green-900)]"
+              className="block text-sm font-bold text-(--green-900)"
             >
               Rejection reason
             </label>

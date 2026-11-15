@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FiCreditCard } from 'react-icons/fi';
 import {
   getFarmerPayments,
@@ -26,7 +26,7 @@ const Payments = () => {
   const [submitting, setSubmitting] =
     useState(false);
 
-  const loadPayments = async () => {
+  const loadPayments = useCallback(async () => {
     try {
       const response =
         await getFarmerPayments({
@@ -44,11 +44,11 @@ const Payments = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [error]);
 
   useEffect(() => {
-    loadPayments();
-  }, []);
+    Promise.resolve().then(loadPayments);
+  }, [loadPayments]);
 
   const handleSubmitProof = async (payload) => {
     setSubmitting(true);

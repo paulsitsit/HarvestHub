@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   approveFarmer,
   flagFarmerFraud,
@@ -30,7 +30,7 @@ const ManageFarmers = () => {
   const [modal, setModal] = useState(null);
   const [reason, setReason] = useState('');
 
-  const loadFarmers = async () => {
+  const loadFarmers = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -53,15 +53,11 @@ const ManageFarmers = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [error, filters.flagged, filters.search, filters.status]);
 
   useEffect(() => {
-    loadFarmers();
-  }, [
-    filters.search,
-    filters.status,
-    filters.flagged
-  ]);
+    Promise.resolve().then(loadFarmers);
+  }, [loadFarmers]);
 
   const runAction = async (
     farmer,

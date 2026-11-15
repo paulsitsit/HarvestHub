@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   FiCalendar,
   FiMapPin,
-  FiPackage,
-  FiPhone,
-  FiUser
+  FiPackage
 } from 'react-icons/fi';
 import { Link, useParams } from 'react-router-dom';
 import {

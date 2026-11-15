@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   getAdminPayments,
   rejectAdminPayment,
@@ -28,7 +28,7 @@ const ManagePayments = () => {
     useState(null);
   const [reason, setReason] = useState('');
 
-  const loadPayments = async () => {
+  const loadPayments = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -50,14 +50,11 @@ const ManagePayments = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [error, filters.search, filters.status]);
 
   useEffect(() => {
-    loadPayments();
-  }, [
-    filters.search,
-    filters.status
-  ]);
+    Promise.resolve().then(loadPayments);
+  }, [loadPayments]);
 
   const handleVerify = async (payment) => {
     setLoadingId(payment._id);

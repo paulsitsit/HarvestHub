@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   FiMessageSquare,
   FiPhone
@@ -23,7 +23,7 @@ const ReceivedOrders = () => {
     useState([]);
   const [loading, setLoading] = useState(true);
 
-  const loadInquiries = async () => {
+  const loadInquiries = useCallback(async () => {
     try {
       const response =
         await getFarmerInquiries({
@@ -43,11 +43,11 @@ const ReceivedOrders = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [error]);
 
   useEffect(() => {
-    loadInquiries();
-  }, []);
+    Promise.resolve().then(loadInquiries);
+  }, [loadInquiries]);
 
   const handleStatusChange = async (
     inquiry,

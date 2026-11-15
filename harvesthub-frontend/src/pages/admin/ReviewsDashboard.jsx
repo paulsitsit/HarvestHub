@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   deleteReview,
   flagReview,
@@ -38,7 +38,7 @@ const ReviewsDashboard = () => {
     useState(null);
   const [reason, setReason] = useState('');
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -70,15 +70,11 @@ const ReviewsDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [error, filters.rating, filters.search, filters.status]);
 
   useEffect(() => {
-    loadData();
-  }, [
-    filters.search,
-    filters.status,
-    filters.rating
-  ]);
+    Promise.resolve().then(loadData);
+  }, [loadData]);
 
   const runReviewAction = async (
     review,

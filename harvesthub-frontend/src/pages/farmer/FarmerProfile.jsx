@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
-  FiSave,
-  FiUpload
+  FiSave
 } from 'react-icons/fi';
 import {
   getFarmerProfile,

@@ -114,7 +114,7 @@ const MyProducts = () => {
   );
 
   useEffect(() => {
-    loadProducts();
+    Promise.resolve().then(loadProducts);
   }, [loadProducts]);
 
   const handleAvailabilityChange = async (

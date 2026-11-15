@@ -10,7 +10,6 @@ import {
 import { getApiErrorMessage } from '../../api/axiosInstance.js';
 
 import Button from '../../components/common/Button.jsx';
-import Loader from '../../components/common/Loader.jsx';
 import Modal from '../../components/common/Modal.jsx';
 import Pagination from '../../components/common/Pagination.jsx';
 
@@ -208,15 +207,15 @@ const Products = () => {
     <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
       <div className="flex flex-wrap items-end justify-between gap-5">
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--green-700)]">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-(--green-700)">
             Marketplace
           </p>
 
-          <h1 className="mt-2 text-4xl font-extrabold text-[var(--green-900)]">
+          <h1 className="mt-2 text-4xl font-extrabold text-(--green-900)">
             Fresh produce near you
           </h1>
 
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--muted)]">
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-(--muted)">
             Browse available produce and contact farmers
             directly.
           </p>
@@ -244,7 +243,7 @@ const Products = () => {
 
         <div>
           <div className="mb-5 flex items-center justify-between gap-4">
-            <p className="text-sm font-semibold text-[var(--muted)]">
+            <p className="text-sm font-semibold text-(--muted)">
               {productsData.pagination.total || 0}{' '}
               listing
               {productsData.pagination.total === 1
@@ -254,7 +253,7 @@ const Products = () => {
             </p>
 
             {loading && (
-              <span className="text-xs font-bold text-[var(--green-700)]">
+              <span className="text-xs font-bold text-(--green-700)">
                 Updating...
               </span>
             )}

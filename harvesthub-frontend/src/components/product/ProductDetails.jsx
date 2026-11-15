@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   FiCalendar,
   FiMapPin,
-  FiPackage,
-  FiPhone,
-  FiUser
+  FiPackage
 } from 'react-icons/fi';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -32,57 +30,43 @@ const ProductDetails = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const loadProduct = async () => {
+  const loadProduct = useCallback(async (isActive = () => true) => {
     try {
       const response =
         await getPublicProductById(id);
 
-      setData(response.data);
+      if (isActive()) {
+        setData(response.data);
+      }
     } catch (requestError) {
-      error(
-        getApiErrorMessage(
-          requestError,
-          'Unable to load product'
-        )
-      );
+      if (isActive()) {
+        error(
+          getApiErrorMessage(
+            requestError,
+            'Unable to load product'
+          )
+        );
+      }
     } finally {
-      setLoading(false);
+      if (isActive()) {
+        setLoading(false);
+      }
     }
-  };
+  }, [id, error]);
 
   useEffect(() => {
     let active = true;
 
-    const fetchProduct = async () => {
-      try {
-        const response =
-          await getPublicProductById(id);
-
-        if (active) {
-          setData(response.data);
-        }
-      } catch (requestError) {
-        if (active) {
-          error(
-            getApiErrorMessage(
-              requestError,
-              'Unable to load product'
-            )
-          );
-        }
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
+    Promise.resolve().then(() => {
+      if (active) {
+        loadProduct(() => active);
       }
-    };
-
-    fetchProduct();
+    });
 
     return () => {
       active = false;
     };
-  }, [id, error]);
+  }, [loadProduct]);
 
   if (loading) {
     return (
@@ -97,11 +81,11 @@ const ProductDetails = () => {
     return (
       <div className="mx-auto max-w-3xl px-5 py-20">
         <GlassCard className="p-8 text-center">
-          <h1 className="text-2xl font-extrabold text-[var(--green-900)]">
+          <h1 className="text-2xl font-extrabold text-(--green-900)">
             Product unavailable
           </h1>
 
-          <p className="mt-3 text-sm text-[var(--muted)]">
+          <p className="mt-3 text-sm text-(--muted)">
             This listing may have expired or been removed.
           </p>
 
@@ -129,10 +113,10 @@ const ProductDetails = () => {
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-10 pb-28 lg:px-8 lg:pb-10">
-      <div className="mb-6 text-sm text-[var(--muted)]">
+      <div className="mb-6 text-sm text-(--muted)">
         <Link
           to="/products"
-          className="font-bold text-[var(--green-700)] hover:underline"
+          className="font-bold text-(--green-700) hover:underline"
         >
           Products
         </Link>
@@ -152,19 +136,19 @@ const ProductDetails = () => {
               <Badge status={product.availability} />
 
               {product.category?.name && (
-                <span className="rounded-full bg-[var(--gold-100)] px-3 py-1 text-xs font-bold text-[var(--gold-600)]">
+                <span className="rounded-full bg-(--gold-100) px-3 py-1 text-xs font-bold text-(--gold-600)">
                   {product.category.name}
                 </span>
               )}
             </div>
 
-            <h1 className="mt-4 text-4xl font-extrabold text-[var(--green-900)]">
+            <h1 className="mt-4 text-4xl font-extrabold text-(--green-900)">
               {product.name}
             </h1>
 
-            <p className="mt-4 text-3xl font-extrabold text-[var(--gold-600)]">
+            <p className="mt-4 text-3xl font-extrabold text-(--gold-600)">
               {formatCurrency(product.price)}
-              <span className="ml-2 text-sm font-semibold text-[var(--muted)]">
+              <span className="ml-2 text-sm font-semibold text-(--muted)">
                 per {product.unit}
               </span>
             </p>
@@ -173,28 +157,28 @@ const ProductDetails = () => {
           <GlassCard className="p-5">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex items-center gap-3">
-                <FiPackage className="text-[var(--green-700)]" />
+                <FiPackage className="text-(--green-700)" />
 
                 <div>
-                  <p className="text-xs text-[var(--muted)]">
+                  <p className="text-xs text-(--muted)">
                     Availability
                   </p>
 
-                  <p className="font-bold text-[var(--green-900)]">
+                  <p className="font-bold text-(--green-900)">
                     {product.quantity} {product.unit}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <FiCalendar className="text-[var(--green-700)]" />
+                <FiCalendar className="text-(--green-700)" />
 
                 <div>
-                  <p className="text-xs text-[var(--muted)]">
+                  <p className="text-xs text-(--muted)">
                     Harvest date
                   </p>
 
-                  <p className="font-bold text-[var(--green-900)]">
+                  <p className="font-bold text-(--green-900)">
                     {formatDate(product.harvestDate)}
                   </p>
                 </div>
@@ -204,11 +188,11 @@ const ProductDetails = () => {
 
           {product.description && (
             <div>
-              <h2 className="text-xl font-extrabold text-[var(--green-900)]">
+              <h2 className="text-xl font-extrabold text-(--green-900)">
                 About this produce
               </h2>
 
-              <p className="mt-3 whitespace-pre-line text-sm leading-8 text-[var(--muted)]">
+              <p className="mt-3 whitespace-pre-line text-sm leading-8 text-(--muted)">
                 {product.description}
               </p>
             </div>
@@ -216,7 +200,7 @@ const ProductDetails = () => {
 
           <GlassCard className="p-5">
             <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[var(--green-100)] text-2xl">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-(--green-100) text-2xl">
                 {farmerImage ? (
                   <img
                     src={farmerImage}
@@ -229,18 +213,18 @@ const ProductDetails = () => {
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold uppercase tracking-wider text-[var(--green-700)]">
+                <p className="text-xs font-bold uppercase tracking-wider text-(--green-700)">
                   Sold by
                 </p>
 
                 <Link
                   to={`/farmers/${farmer._id}`}
-                  className="mt-1 block truncate text-lg font-extrabold text-[var(--green-900)] hover:text-[var(--green-700)]"
+                  className="mt-1 block truncate text-lg font-extrabold text-(--green-900) hover:text-(--green-700)"
                 >
                   {farmer.farmName}
                 </Link>
 
-                <p className="mt-1 flex items-center gap-1 text-sm text-[var(--muted)]">
+                <p className="mt-1 flex items-center gap-1 text-sm text-(--muted)">
                   <FiMapPin size={14} />
                   {farmer.municipality || 'Passi City'}
                 </p>

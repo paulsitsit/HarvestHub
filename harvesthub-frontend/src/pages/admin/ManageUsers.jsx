@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   deleteUser,
   getAdminUsers,
@@ -14,13 +14,8 @@ import Select from '../../components/common/Select.jsx';
 import Loader from '../../components/common/Loader.jsx';
 import UserTable from '../../components/admin/UserTable.jsx';
 import useToast from '../../hooks/useToast.js';
-import useAuth from '../../hooks/useAuth.js';
 
 const ManageUsers = () => {
-  const {
-    user: currentUser
-  } = useAuth();
-
   const { success, error } = useToast();
 
   const [users, setUsers] = useState([]);
@@ -39,7 +34,7 @@ const ManageUsers = () => {
   const [deleteTarget, setDeleteTarget] =
     useState(null);
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -65,15 +60,11 @@ const ManageUsers = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [error, filters.isActive, filters.role, filters.search]);
 
   useEffect(() => {
-    loadUsers();
-  }, [
-    filters.search,
-    filters.role,
-    filters.isActive
-  ]);
+    Promise.resolve().then(loadUsers);
+  }, [loadUsers]);
 
   const handleStatusChange = async (
     account,

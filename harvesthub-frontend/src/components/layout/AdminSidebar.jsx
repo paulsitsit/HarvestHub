@@ -1,5 +1,4 @@
 import {
-  FiBarChart2,
   FiCreditCard,
   FiHome,
   FiLogOut,

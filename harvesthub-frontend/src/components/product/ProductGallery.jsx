@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { API_ORIGIN } from '../../utils/constants.js';
 
@@ -24,29 +24,36 @@ const ProductGallery = ({
   const normalizedImages =
     images.length > 0 ? images : [fallbackImage];
 
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [images]);
+  const imagesKey = normalizedImages.join('\u0000');
+  const [selection, setSelection] = useState({
+    imagesKey,
+    index: 0
+  });
+  const activeIndex =
+    selection.imagesKey === imagesKey
+      ? selection.index
+      : 0;
+  const selectImage = (index) => {
+    setSelection({ imagesKey, index });
+  };
 
   const activeImage =
     normalizedImages[activeIndex] ||
     normalizedImages[0];
 
   const showPrevious = () => {
-    setActiveIndex((current) =>
-      current === 0
+    selectImage(
+      activeIndex === 0
         ? normalizedImages.length - 1
-        : current - 1
+        : activeIndex - 1
     );
   };
 
   const showNext = () => {
-    setActiveIndex((current) =>
-      current === normalizedImages.length - 1
+    selectImage(
+      activeIndex === normalizedImages.length - 1
         ? 0
-        : current + 1
+        : activeIndex + 1
     );
   };
 
@@ -92,7 +99,7 @@ const ProductGallery = ({
             <button
               key={`${image}-${index}`}
               type="button"
-              onClick={() => setActiveIndex(index)}
+              onClick={() => selectImage(index)}
               aria-label={`Show product image ${index + 1}`}
               className={[
                 'aspect-square overflow-hidden rounded-xl border-2 transition',

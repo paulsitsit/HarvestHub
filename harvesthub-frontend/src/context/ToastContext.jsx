@@ -1,11 +1,9 @@
 import {
-  createContext,
   useCallback,
   useMemo
 } from 'react';
 import toast from 'react-hot-toast';
-
-export const ToastContext = createContext(null);
+import { ToastContext } from './ToastContextValue.js';
 
 export const ToastProvider = ({ children }) => {
   const success = useCallback((message) => {

@@ -1,5 +1,4 @@
 import {
-  createContext,
   useCallback,
   useEffect,
   useMemo,
@@ -13,8 +12,7 @@ import {
 } from '../api/authApi.js';
 
 import { getApiErrorMessage } from '../api/axiosInstance.js';
-
-export const AuthContext = createContext(null);
+import { AuthContext } from './AuthContextValue.js';
 
 const TOKEN_KEY = 'harvesthub_token';
 const USER_KEY = 'harvesthub_user';
@@ -117,9 +115,11 @@ export const AuthProvider = ({ children }) => {
   }, [logout]);
 
   useEffect(() => {
-    refreshUser().catch(() => {
-      setLoading(false);
-    });
+    Promise.resolve().then(() =>
+      refreshUser().catch(() => {
+        setLoading(false);
+      })
+    );
   }, [refreshUser]);
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import Button from '../../components/common/Button.jsx';
 import GlassCard from '../../components/common/GlassCard.jsx';
-import ImageUploader from '../../components/common/ImageUploader.jsx';
 import Input from '../../components/common/Input.jsx';
 import Select from '../../components/common/Select.jsx';
 

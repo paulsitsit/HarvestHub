@@ -9,6 +9,7 @@ import authRoutes from './routes/authRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import farmerRoutes from './routes/farmerRoutes.js';
+import inquiryRoutes from './routes/inquiryRoutes.js';
 
 import {
   notFound,
@@ -108,6 +109,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/farmer', farmerRoutes);
+app.use('/api/farmer/inquiries', inquiryRoutes);
 
 // Keep these last.
 app.use(notFound);
