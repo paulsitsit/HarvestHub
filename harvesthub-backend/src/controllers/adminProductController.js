@@ -9,6 +9,8 @@ import {
   PRODUCT_STATUSES
 } from '../config/constants.js';
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\const isValidObjectId = (id) => {');
+
 const isValidObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id);
 };
@@ -77,19 +79,10 @@ export const getAdminProducts = asyncHandler(async (req, res) => {
   }
 
   if (search.trim()) {
+    const searchRegex = new RegExp(escapeRegex(search.trim()), 'i');
     filter.$or = [
-      {
-        name: {
-          $regex: search.trim(),
-          $options: 'i'
-        }
-      },
-      {
-        description: {
-          $regex: search.trim(),
-          $options: 'i'
-        }
-      }
+      { name: searchRegex },
+      { description: searchRegex }
     ];
   }
 
