@@ -5,9 +5,7 @@ import {
 } from 'react-icons/fi';
 import GlassCard from '../common/GlassCard.jsx';
 import StarRating from '../common/StarRating.jsx';
-import {
-  API_ORIGIN
-} from '../../utils/constants.js';
+import { getImageUrl } from '../../utils/getImageUrl.js';
 
 const FarmerCard = ({ farmer }) => {
   return (
@@ -16,7 +14,7 @@ const FarmerCard = ({ farmer }) => {
         <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[var(--green-100)] text-2xl">
           {farmer.profilePhoto ? (
             <img
-              src={`${API_ORIGIN}${farmer.profilePhoto}`}
+              src={getImageUrl(farmer.profilePhoto)}
               alt={`${farmer.farmName} profile`}
               className="h-full w-full object-cover"
             />
