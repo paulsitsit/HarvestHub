@@ -84,3 +84,4 @@ export const profileUpload = uploader.fields([
 ]);
 
 export const productUpload = uploader.array('images', 5);
+export const imageUpload = uploader;
